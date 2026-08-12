@@ -1037,40 +1037,73 @@ function setStatus(state, text) {
 }
 
 // ──────────────────────────────────────────────
-//  FETCH WRAPPER (JSONP สำหรับ GAS CORS)
+//  FETCH WRAPPER v5 — fetch() primary, JSONP fallback
+//  GAS ทำ redirect: script.google.com → script.googleusercontent.com
+//  JSONP <script> injection ถูก CSP บล็อกบน GitHub Pages
+//  → ใช้ fetch() ก่อน (follow redirect ได้) แล้ว fallback เป็น JSONP ถ้า CORS error
 // ──────────────────────────────────────────────
-function fetchGAS(action, params = {}) {
-  return new Promise((resolve, reject) => {
-    // ── DEMO MODE ──
-    if (!GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE' || IS_LOCAL_FILE) {
-      if (IS_LOCAL_FILE) console.info(`[TCCReport] file:// → Demo (${action})`);
-      setTimeout(() => resolve(getMockData(action)), 600);
-      return;
-    }
+async function fetchGAS(action, params = {}) {
+  // ── DEMO MODE ──
+  if (!GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE' || IS_LOCAL_FILE) {
+    if (IS_LOCAL_FILE) console.info(`[TCCReport] file:// → Demo (${action})`);
+    await new Promise(r => setTimeout(r, 600));
+    return getMockData(action);
+  }
 
-    // ── JSONP (GAS redirect ช้า — ต้อง timeout นานพอ) ──
+  // ── ลบ _retry ออกจาก params จริง (ใช้แค่ภายใน) ──
+  const { _retry, ...cleanParams } = params;
+  const qs = new URLSearchParams({ action, ...cleanParams }).toString();
+  const url = `${GAS_URL}?${qs}`;
+
+  // ── PRIMARY: fetch() — follow redirect อัตโนมัติ, ไม่ติด CSP script-src ──
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 25000);
+    const res = await fetch(url, {
+      method: 'GET',
+      signal: controller.signal,
+      redirect: 'follow',   // follow GAS redirect โดยอัตโนมัติ
+    });
+    clearTimeout(timer);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    console.log(`[TCCReport] fetch OK: ${action}`);
+    return data;
+  } catch (fetchErr) {
+    // CORS / network error → ลอง JSONP fallback ครั้งเดียว
+    if (!_retry) {
+      console.warn(`[TCCReport] fetch failed (${action}): ${fetchErr.message} → try JSONP`);
+      return fetchGAS_JSONP(action, cleanParams);
+    }
+    // JSONP ก็ล้มเหลวแล้ว → คืน mock
+    console.warn(`[TCCReport] ${action} all methods failed → fallback mock`);
+    if (action === 'news') setStatus('error', 'โหลดข้อมูลไม่สำเร็จ — กรุณารีเฟรช');
+    return getMockData(action);
+  }
+}
+
+// ── JSONP FALLBACK (ใช้เฉพาะเมื่อ fetch() CORS error) ──
+function fetchGAS_JSONP(action, params = {}) {
+  return new Promise((resolve) => {
     const cbName = '_cb_' + action + '_' + Date.now();
     const qs = new URLSearchParams({ action, callback: cbName, ...params }).toString();
     const script = document.createElement('script');
-    let settled  = false;
+    let settled = false;
 
     const timeout = setTimeout(() => {
       if (settled) return;
       settled = true;
-      // อย่าลบ window[cbName] ทันที — GAS อาจยังส่งกลับมาหลัง timeout
-      // ให้ window[cbName] เป็น noop แทน เพื่อกัน "is not defined" error
       window[cbName] = () => {};
       script.remove();
-      console.warn(`[TCCReport] ${action} timeout (25s) → fallback mock`);
+      console.warn(`[TCCReport] JSONP ${action} timeout → fallback mock`);
       if (action === 'news') setStatus('error', 'โหลดข้อมูลช้า (timeout) — กรุณารีเฟรช');
       resolve(getMockData(action));
-    }, 25000); // 25 วินาที — GAS redirect อาจใช้ 10-20s
+    }, 25000);
 
     window[cbName] = (data) => {
-      if (settled) return; // ถ้า timeout แล้ว ไม่ทำอะไร
+      if (settled) return;
       settled = true;
       clearTimeout(timeout);
-      // delay cleanup เล็กน้อย ให้ script execute เสร็จก่อน
       setTimeout(() => { delete window[cbName]; script.remove(); }, 100);
       resolve(data);
     };
@@ -1082,7 +1115,7 @@ function fetchGAS(action, params = {}) {
       clearTimeout(timeout);
       window[cbName] = () => {};
       script.remove();
-      console.warn(`[TCCReport] ${action} script error → fallback mock`);
+      console.warn(`[TCCReport] JSONP ${action} script error → fallback mock`);
       if (action === 'news') setStatus('error', 'เชื่อมต่อ GAS ไม่ได้ — กรุณารีเฟรช');
       resolve(getMockData(action));
     };
