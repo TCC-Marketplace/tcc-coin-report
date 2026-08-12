@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>TCCCoin Report v7: Bitcoin, Ethereum, XRP, ข่าว Crypto และราคา</title>
-<!-- v7: Fix published filter robust | TCC News section แยก | asset_tags fix -->
+<title>TCCCoin Report v8: Bitcoin, Ethereum, XRP, ข่าว Crypto และราคา</title>
+<!-- v8: Share system — Share button ทุก card + list | Share modal (Copy/FB/X/LINE) | Deep link ?news=id | Auto-open modal -->
 <meta name="description" content="แหล่งข่าว Crypto ชั้นนำสำหรับนักเทรดไทย ครอบคลุมตลาด นโยบาย เทคโนโลยี และการเงิน Crypto ระดับโลก"/>
 <meta property="og:title" content="TCCCoin Report"/>
 <meta property="og:description" content="ข่าว Crypto ภาษาไทย อัปเดตทุก 30 นาที"/>
@@ -332,6 +332,54 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 .tcc-empty{text-align:center;padding:32px 20px;color:var(--gray-400);border:1.5px dashed var(--gray-200);border-radius:4px}
 .tcc-empty p{font-size:13px;margin-top:8px}
 
+/* ─── SHARE BUTTON ─── */
+.btn-share{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--gray-600);background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:20px;cursor:pointer;transition:all .15s;font-family:inherit;white-space:nowrap;flex-shrink:0}
+.btn-share:hover{color:var(--black);border-color:var(--black);background:#fff}
+.btn-share svg{width:12px;height:12px;flex-shrink:0}
+/* hero share button — slightly larger */
+.btn-share.lg{padding:6px 14px;font-size:12px;border-radius:4px}
+
+/* ─── SHARE MODAL ─── */
+.share-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:3000;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.share-overlay.open{display:flex}
+.share-box{background:#fff;border-radius:10px;width:100%;max-width:420px;padding:28px 28px 24px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.2);animation:modalIn .2s ease;margin:16px}
+.share-close{position:absolute;top:14px;right:16px;font-size:20px;background:none;border:none;color:var(--gray-400);cursor:pointer;padding:4px;line-height:1}
+.share-close:hover{color:var(--black)}
+.share-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-400);margin-bottom:8px}
+.share-headline{font-size:15px;font-weight:700;line-height:1.4;color:var(--black);margin-bottom:20px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.share-copy-row{display:flex;gap:8px;margin-bottom:20px}
+.share-url-input{flex:1;padding:9px 12px;font-size:12px;font-family:'IBM Plex Mono',monospace;border:1.5px solid var(--gray-200);border-radius:6px;background:var(--gray-50);color:var(--gray-600);outline:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.share-url-input:focus{border-color:var(--black)}
+.btn-copy{padding:9px 14px;font-size:13px;font-weight:700;background:var(--black);color:#fff;border:none;border-radius:6px;cursor:pointer;transition:opacity .15s;white-space:nowrap;font-family:inherit}
+.btn-copy:hover{opacity:.8}
+.btn-copy.copied{background:var(--positive)}
+.share-divider{font-size:11px;color:var(--gray-400);text-align:center;margin-bottom:16px;position:relative}
+.share-divider::before,.share-divider::after{content:'';position:absolute;top:50%;width:calc(50% - 32px);height:1px;background:var(--gray-200)}
+.share-divider::before{left:0}.share-divider::after{right:0}
+.share-channels{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.share-ch{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border:1.5px solid var(--gray-200);border-radius:8px;cursor:pointer;transition:all .15s;background:none;font-family:inherit}
+.share-ch:hover{border-color:var(--black);background:var(--gray-50)}
+.share-ch-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px}
+.share-ch-label{font-size:11px;font-weight:600;color:var(--gray-600)}
+.share-ch.fb .share-ch-icon{background:#1877f2;color:#fff}
+.share-ch.tw .share-ch-icon{background:#000;color:#fff;font-size:15px}
+.share-ch.line .share-ch-icon{background:#06c755;color:#fff}
+
+/* ─── NEWS DETAIL MODAL ─── */
+.news-detail-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2500;align-items:flex-start;justify-content:center;overflow-y:auto;padding:32px 16px;backdrop-filter:blur(2px)}
+.news-detail-overlay.open{display:flex}
+.news-detail-box{background:#fff;border-radius:10px;width:100%;max-width:680px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.2);animation:modalIn .2s ease;margin:auto}
+.news-detail-header{padding:24px 28px 0}
+.news-detail-close{position:absolute;top:14px;right:16px;font-size:22px;background:none;border:none;color:var(--gray-400);cursor:pointer;line-height:1;padding:4px}
+.news-detail-close:hover{color:var(--black)}
+.news-detail-img{width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--gray-100);display:block;margin-bottom:20px}
+.news-detail-cat{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tcc-red);margin-bottom:8px}
+.news-detail-title{font-size:22px;font-weight:700;line-height:1.3;letter-spacing:-.3px;margin-bottom:12px}
+.news-detail-meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray-600);margin-bottom:16px;flex-wrap:wrap}
+.news-detail-body{padding:0 28px 28px;font-size:15px;line-height:1.7;color:var(--gray-800)}
+.news-detail-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.news-detail-actions{display:flex;gap:10px;padding:16px 28px;border-top:1px solid var(--gray-100)}
+
 /* ─── RESPONSIVE ─── */
 @media(max-width:900px){
   .hero-grid,.grid-main,.sb-hero,.footer-links,.opinion-grid{grid-template-columns:1fr}
@@ -653,6 +701,62 @@ const IS_LOCAL_FILE = window.location.protocol === 'file:';
   </div>
 </footer>
 
+<!-- ════════ SHARE MODAL ════════ -->
+<div class="share-overlay" id="share-overlay" onclick="handleShareOverlayClick(event)">
+  <div class="share-box" id="share-box">
+    <button class="share-close" onclick="closeShareModal()" title="ปิด">×</button>
+    <div class="share-title">แชร์ข่าวนี้</div>
+    <div class="share-headline" id="share-headline">—</div>
+    <div class="share-copy-row">
+      <input class="share-url-input" id="share-url-input" readonly type="text" value=""/>
+      <button class="btn-copy" id="btn-copy" onclick="copyShareLink()">คัดลอก</button>
+    </div>
+    <div class="share-divider">แชร์ไปยัง</div>
+    <div class="share-channels">
+      <button class="share-ch fb" onclick="shareToFacebook()">
+        <span class="share-ch-icon">f</span>
+        <span class="share-ch-label">Facebook</span>
+      </button>
+      <button class="share-ch tw" onclick="shareToTwitter()">
+        <span class="share-ch-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.258 5.63 5.906-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </span>
+        <span class="share-ch-label">X / Twitter</span>
+      </button>
+      <button class="share-ch line" onclick="shareToLine()">
+        <span class="share-ch-icon">LINE</span>
+        <span class="share-ch-label">LINE</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ NEWS DETAIL MODAL ════════ -->
+<div class="news-detail-overlay" id="news-detail-overlay" onclick="handleDetailOverlayClick(event)">
+  <div class="news-detail-box" id="news-detail-box">
+    <div class="news-detail-header">
+      <button class="news-detail-close" onclick="closeNewsDetail()" title="ปิด">×</button>
+      <div class="news-detail-cat" id="nd-cat">—</div>
+      <div class="news-detail-title" id="nd-title">—</div>
+      <div class="news-detail-meta" id="nd-meta"></div>
+      <div class="news-detail-tags" id="nd-tags"></div>
+    </div>
+    <img class="news-detail-img" id="nd-img" src="" alt="" style="display:none"/>
+    <div class="news-detail-body" id="nd-body"></div>
+    <div class="news-detail-actions">
+      <a id="nd-readmore" href="#" target="_blank" rel="noopener"
+         style="padding:9px 16px;background:var(--black);color:#fff;font-size:13px;font-weight:700;border-radius:6px;display:inline-flex;align-items:center;gap:6px">
+        อ่านต่อที่แหล่งข่าว →
+      </a>
+      <button id="nd-share-btn" onclick="openShareFromDetail()"
+              style="padding:9px 16px;background:none;color:var(--black);font-size:13px;font-weight:700;border:1.5px solid var(--gray-200);border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+        แชร์
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- ════════ AUTH MODAL ════════ -->
 <div class="modal-overlay" id="auth-modal" onclick="handleOverlayClick(event)">
   <div class="modal-box">
@@ -757,7 +861,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </span>
     `;
   }
-  refreshAll();
+  refreshAll().then(() => checkDeepLink());
   // Auto refresh: prices ทุก 60 วินาที, news ทุก 5 นาที, TCC news ทุก 2 นาที
   setInterval(fetchPrices,  60000);
   setInterval(fetchNews,    5 * 60000);
@@ -859,6 +963,12 @@ function getMockData(action) {
       { date: '2026-09-05T00:00:00Z', title: 'Consensus Singapore 2026',        location: 'สิงคโปร์',        url: '#' },
       { date: '2026-09-18T00:00:00Z', title: 'ETHGlobal Bangkok Hackathon',     location: 'กรุงเทพฯ, ไทย', url: '#' },
     ]};
+  }
+  if (action === 'getNewsById') {
+    // ค้นหาใน allNews + allTCCNews ที่โหลดมาแล้ว
+    const all = [...(allTCCNews || []), ...(allNews || [])];
+    const found = all.find(n => n.id === (p && p.id));
+    return found ? { news: found } : { news: null };
   }
   // news mock — ใช้ Unsplash สำหรับ demo
   const IMG = {
@@ -997,7 +1107,9 @@ function renderHero(news) {
 
   const tagsEl = document.getElementById('hero-tags');
   const tags = (n.asset_tags || []).map(t => `<span class="asset-tag">${t}</span>`).join('');
-  tagsEl.innerHTML = tags + `<a href="${n.url}" target="_blank" rel="noopener" style="font-size:13px;font-weight:700;border-bottom:1px solid #000;margin-left:4px">อ่านต่อ →</a>`;
+  tagsEl.innerHTML = tags
+    + `<a href="${n.url}" target="_blank" rel="noopener" style="font-size:13px;font-weight:700;border-bottom:1px solid #000;margin-left:4px">อ่านต่อ →</a>`
+    + shareBtnHtml(n.id, n.title_th || n.title_en, n.url, true);
 }
 
 // ──────────────────────────────────────────────
@@ -1019,7 +1131,11 @@ function renderThumbStrip(news) {
       <div>
         <div class="thumb-cat">${CAT_MAP[n.category] || n.category}</div>
         <a class="thumb-title" href="${n.url}" target="_blank" rel="noopener">${n.title_th || n.title_en}</a>
-        <div class="thumb-meta"><span class="sentiment ${n.sentiment}" style="font-size:9px">${sentimentLabel(n.sentiment)}</span> · ${timeAgo(n.timestamp)}</div>
+        <div class="thumb-meta" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span class="sentiment ${n.sentiment}" style="font-size:9px">${sentimentLabel(n.sentiment)}</span>
+          <span>·</span><span>${timeAgo(n.timestamp)}</span>
+          ${shareBtnHtml(n.id, n.title_th || n.title_en, n.url)}
+        </div>
       </div>
     </div>
   `).join('');
@@ -1043,7 +1159,11 @@ function renderFeaturedGrid(news) {
       </div>
       <div class="feature-cat">${CAT_MAP[n.category] || n.category}</div>
       <div class="feature-title"><a href="${n.url}" target="_blank" rel="noopener">${n.title_th || n.title_en}</a></div>
-      <div class="feature-meta"><span class="sentiment ${n.sentiment}" style="font-size:9px">${sentimentLabel(n.sentiment)}</span> · ${timeAgo(n.timestamp)}</div>
+      <div class="feature-meta" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span class="sentiment ${n.sentiment}" style="font-size:9px">${sentimentLabel(n.sentiment)}</span>
+        <span>·</span><span>${timeAgo(n.timestamp)}</span>
+        ${shareBtnHtml(n.id, n.title_th || n.title_en, n.url)}
+      </div>
     </div>
   `).join('');
 }
@@ -1081,16 +1201,19 @@ function renderTCCNews() {
          </div>`;
     return `
       <div class="tcc-card">
-        ${imgHtml}
+        <div style="cursor:pointer" onclick="openNewsDetail('${n.id}')">
+          ${imgHtml}
+        </div>
         <div class="tcc-card-body">
           <div class="tcc-card-cat">${CAT_MAP[n.category] || n.category || 'ประกาศ'}</div>
           <div class="tcc-card-title">
-            <a href="${n.url || '#'}" target="_blank" rel="noopener">${n.title_th || n.title_en}</a>
+            <a href="#" onclick="event.preventDefault();openNewsDetail('${n.id}')">${n.title_th || n.title_en}</a>
           </div>
           <div class="tcc-card-meta">
             <span class="sentiment ${n.sentiment}">${sentimentLabel(n.sentiment)}</span>
             ${(n.asset_tags || []).map(t => `<span class="asset-tag">${t}</span>`).join('')}
             <span style="margin-left:auto">${timeAgo(n.timestamp)}</span>
+            ${shareBtnHtml(n.id, n.title_th || n.title_en, n.url)}
           </div>
         </div>
       </div>`;
@@ -1103,10 +1226,11 @@ function renderTCCNews() {
       <div class="tcc-list-item">
         <div class="tcc-list-num">${String(i + 3).padStart(2, '0')}</div>
         <div class="tcc-list-body">
-          <h4><a href="${n.url || '#'}" target="_blank" rel="noopener">${n.title_th || n.title_en}</a></h4>
-          <div class="tcc-list-meta">
-            ${timeAgo(n.timestamp)}
+          <h4><a href="#" onclick="event.preventDefault();openNewsDetail('${n.id}')">${n.title_th || n.title_en}</a></h4>
+          <div class="tcc-list-meta" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span>${timeAgo(n.timestamp)}</span>
             ${(n.asset_tags || []).length ? '· ' + n.asset_tags.map(t => `<span class="asset-tag">${t}</span>`).join('') : ''}
+            ${shareBtnHtml(n.id, n.title_th || n.title_en, n.url)}
           </div>
         </div>
       </div>`).join('');
@@ -1140,14 +1264,20 @@ function renderSectionBlock(elId, news) {
         <div class="sb-hero-cat">${CAT_MAP[hero.category] || hero.category}</div>
         <h3><a href="${hero.url}" target="_blank" rel="noopener">${hero.title_th || hero.title_en}</a></h3>
         <p style="font-size:13px;color:var(--gray-600);line-height:1.6">${hero.title_en || ''}</p>
-        <div class="sb-hero-meta">${timeAgo(hero.timestamp)} · <span class="sentiment ${hero.sentiment}" style="font-size:9px">${sentimentLabel(hero.sentiment)}</span></div>
+        <div class="sb-hero-meta" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          ${timeAgo(hero.timestamp)} · <span class="sentiment ${hero.sentiment}" style="font-size:9px">${sentimentLabel(hero.sentiment)}</span>
+          ${shareBtnHtml(hero.id, hero.title_th || hero.title_en, hero.url)}
+        </div>
       </div>
     </div>
     <div class="sb-stories">
       ${rest.map(n => `
         <div class="sb-story">
           <h4><a href="${n.url}" target="_blank" rel="noopener">${n.title_th || n.title_en}</a></h4>
-          <span class="sb-story-time">${timeAgo(n.timestamp)}</span>
+          <div style="display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0">
+            <span class="sb-story-time">${timeAgo(n.timestamp)}</span>
+            ${shareBtnHtml(n.id, n.title_th || n.title_en, n.url)}
+          </div>
         </div>
       `).join('')}
     </div>
@@ -1170,6 +1300,7 @@ function renderLatestFeed(news) {
         <div class="latest-bottom">
           <span class="sentiment ${n.sentiment}">${sentimentLabel(n.sentiment)}</span>
           ${(n.asset_tags || []).map(t => `<span class="asset-tag">${t}</span>`).join('')}
+          ${shareBtnHtml(n.id, n.title_th || n.title_en, n.url)}
         </div>
       </div>
     </div>
@@ -1379,8 +1510,14 @@ function handleOverlayClick(e) {
   if (e.target === document.getElementById('auth-modal')) closeModal();
 }
 
-// ESC key
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+// ESC key — ปิดทุก modal
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeModal();
+    closeShareModal();
+    closeNewsDetail();
+  }
+});
 
 function switchTab(tab) {
   document.getElementById('tab-login').classList.toggle('active', tab === 'login');
@@ -1409,6 +1546,222 @@ function showAuthMsg(type, text) {
   const el = document.getElementById('auth-msg');
   el.className = 'auth-msg ' + type;
   el.textContent = text;
+}
+
+// ══════════════════════════════════════════════
+//  SHARE SYSTEM
+// ══════════════════════════════════════════════
+
+let _shareNewsId   = null;  // id ของข่าวที่กำลัง share
+let _shareTitle    = '';
+let _shareUrl      = '';
+let _detailNewsId  = null;  // id ของข่าวที่กำลังแสดง detail
+
+// ── Build deep-link URL ──
+function buildShareURL(newsId) {
+  const base = window.location.origin + window.location.pathname;
+  return base + '?news=' + encodeURIComponent(newsId);
+}
+
+// ── Open Share Modal ──
+function openShareModal(newsId, title, originalUrl) {
+  _shareNewsId = newsId;
+  _shareTitle  = title;
+  // ข่าว TCC ใช้ deep link / ข่าว RSS ใช้ URL ต้นฉบับ
+  _shareUrl    = (newsId && newsId.startsWith('tcc'))
+    ? buildShareURL(newsId)
+    : (originalUrl || buildShareURL(newsId));
+
+  document.getElementById('share-headline').textContent = title;
+  document.getElementById('share-url-input').value      = _shareUrl;
+
+  const copyBtn = document.getElementById('btn-copy');
+  copyBtn.textContent = 'คัดลอก';
+  copyBtn.classList.remove('copied');
+
+  document.getElementById('share-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeShareModal() {
+  document.getElementById('share-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleShareOverlayClick(e) {
+  if (e.target === document.getElementById('share-overlay')) closeShareModal();
+}
+
+// ── Copy Link ──
+async function copyShareLink() {
+  const url = document.getElementById('share-url-input').value;
+  const btn = document.getElementById('btn-copy');
+  try {
+    await navigator.clipboard.writeText(url);
+  } catch(e) {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+  btn.textContent = '✓ คัดลอกแล้ว';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'คัดลอก'; btn.classList.remove('copied'); }, 2200);
+}
+
+// ── Social Share ──
+function shareToFacebook() {
+  const fbUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(_shareUrl);
+  window.open(fbUrl, '_blank', 'width=600,height=400,noopener');
+}
+
+function shareToTwitter() {
+  const text = encodeURIComponent(_shareTitle + ' — ' + _shareUrl);
+  const twUrl = 'https://twitter.com/intent/tweet?text=' + text;
+  window.open(twUrl, '_blank', 'width=600,height=400,noopener');
+}
+
+function shareToLine() {
+  const lineUrl = 'https://social-plugins.line.me/lineit/share?url=' + encodeURIComponent(_shareUrl)
+    + '&text=' + encodeURIComponent(_shareTitle);
+  window.open(lineUrl, '_blank', 'width=600,height=400,noopener');
+}
+
+// ── Share button HTML snippet ──
+function shareBtnHtml(newsId, title, url, lg = false) {
+  const cls = lg ? 'btn-share lg' : 'btn-share';
+  const safeTitle = (title || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  const safeUrl   = (url   || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  return `<button class="${cls}"
+    onclick="event.stopPropagation();openShareModal('${newsId}','${safeTitle}','${safeUrl}')"
+    title="แชร์ข่าวนี้">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/>
+    </svg>แชร์
+  </button>`;
+}
+
+// ══════════════════════════════════════════════
+//  NEWS DETAIL MODAL (TCC News deep-link)
+// ══════════════════════════════════════════════
+function openNewsDetail(newsId) {
+  // ค้นหาข่าวใน allTCCNews ก่อน แล้ว allNews
+  const news = [...(allTCCNews || []), ...(allNews || [])].find(n => n.id === newsId);
+  if (!news) {
+    // fallback: ไป fetch จาก GAS
+    fetchNewsById(newsId);
+    return;
+  }
+  _renderNewsDetail(news);
+}
+
+function _renderNewsDetail(n) {
+  _detailNewsId = n.id;
+
+  const imgEl = document.getElementById('nd-img');
+  if (n.image_url) {
+    imgEl.src = n.image_url; imgEl.style.display = 'block';
+    imgEl.onerror = () => { imgEl.style.display = 'none'; };
+  } else {
+    imgEl.style.display = 'none';
+  }
+
+  document.getElementById('nd-cat').textContent   = CAT_MAP[n.category] || n.category || 'ข่าว';
+  document.getElementById('nd-title').textContent = n.title_th || n.title_en || '';
+  document.getElementById('nd-meta').innerHTML    = `
+    <span>${n.source || 'TCC'}</span><span>·</span>
+    <span>${timeAgo(n.timestamp)}</span>
+    <span class="sentiment ${n.sentiment}">${sentimentLabel(n.sentiment)}</span>
+  `;
+  document.getElementById('nd-tags').innerHTML =
+    (n.asset_tags || []).map(t => `<span class="asset-tag">${t}</span>`).join('');
+
+  // body_th ถ้ามี (TCC news), ไม่งั้นใช้ title_en เป็น excerpt
+  const body = n.body_th || n.title_en || '';
+  document.getElementById('nd-body').innerHTML = body
+    ? `<p>${body.replace(/\n/g, '</p><p>')}</p>`
+    : `<p style="color:var(--gray-400)">คลิก "อ่านต่อ" เพื่อดูเนื้อหาฉบับเต็มที่แหล่งข่าว</p>`;
+
+  const readMoreEl = document.getElementById('nd-readmore');
+  if (n.url && n.url !== '#') {
+    readMoreEl.href = n.url; readMoreEl.style.display = 'inline-flex';
+  } else {
+    readMoreEl.style.display = 'none';
+  }
+
+  document.getElementById('news-detail-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // อัปเดต URL bar (push state)
+  const deepUrl = buildShareURL(n.id);
+  history.pushState({ newsId: n.id }, '', deepUrl);
+}
+
+function closeNewsDetail() {
+  document.getElementById('news-detail-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  _detailNewsId = null;
+  // คืน URL เดิม
+  history.pushState({}, '', window.location.pathname);
+}
+
+function handleDetailOverlayClick(e) {
+  if (e.target === document.getElementById('news-detail-overlay')) closeNewsDetail();
+}
+
+// เปิด share modal จากภายใน detail modal
+function openShareFromDetail() {
+  if (!_detailNewsId) return;
+  const news = [...(allTCCNews || []), ...(allNews || [])].find(n => n.id === _detailNewsId);
+  if (!news) return;
+  closeNewsDetail();
+  setTimeout(() => openShareModal(news.id, news.title_th || news.title_en, news.url), 50);
+}
+
+// ── Fetch single news by ID from GAS (deep-link cold load) ──
+async function fetchNewsById(newsId) {
+  try {
+    const data = await fetchGAS('getNewsById', { id: newsId });
+    if (data && data.news) {
+      _renderNewsDetail(data.news);
+    } else {
+      // fallback: auto-search คืน URL หน้าหลัก
+      console.warn('[Share] news not found:', newsId);
+      history.replaceState({}, '', window.location.pathname);
+    }
+  } catch(e) {
+    console.error('[Share] fetchNewsById error:', e);
+    history.replaceState({}, '', window.location.pathname);
+  }
+}
+
+// ── Handle popstate (back button) ──
+window.addEventListener('popstate', e => {
+  if (e.state && e.state.newsId) {
+    openNewsDetail(e.state.newsId);
+  } else {
+    closeNewsDetail();
+  }
+});
+
+// ── Auto-open on page load if ?news=xxx in URL ──
+function checkDeepLink() {
+  const params = new URLSearchParams(window.location.search);
+  const newsId = params.get('news');
+  if (!newsId) return;
+  // รอให้ข้อมูลโหลดก่อน แล้วค่อย open
+  const tryOpen = () => {
+    const all = [...(allTCCNews || []), ...(allNews || [])];
+    if (all.length > 0) {
+      openNewsDetail(newsId);
+    } else {
+      // ยัง fetch ไม่เสร็จ — รอ 200ms แล้วลองอีก
+      setTimeout(tryOpen, 200);
+    }
+  };
+  setTimeout(tryOpen, 400); // ให้ fetchNews / fetchTCCNews เริ่มก่อน
 }
 
 // ──────────────────────────────────────────────
