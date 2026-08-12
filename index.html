@@ -562,7 +562,7 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 <!-- ════════ CONFIG ════════ -->
 <script>
 // ✅ GAS Web App URL (deploy แล้ว)
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwUsQEJ_oJ8PpwzlljBco4s0jCWRG_4RFkrd9m7tWBm9hRmuz917BXVDofwWd1sh3R0rA/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzqhSEQ186QFBPmf59L_yI8L_fg2UTV-2DzRQsPDww6fjZMQgs0P9am27xBeiyLNCMUNQ/exec';
 
 const TCC_TOKEN_PRICE = 0.085;
 
@@ -1220,17 +1220,80 @@ async function fetchTCCNews() {
 }
 
 // ──────────────────────────────────────────────
-//  FETCH PRICES
+//  FETCH PRICES — ดึงตรงจาก CoinGecko (ไม่ผ่าน GAS Sheet)
+//  GAS Sheet อาจว่างถ้า fetchAllPrices() trigger ยังไม่รัน
+//  CoinGecko free API ไม่ต้อง key — ใช้ได้จาก browser โดยตรง
 // ──────────────────────────────────────────────
+const COINGECKO_IDS  = 'bitcoin,ethereum,binancecoin,solana,ripple,cardano,dogecoin,avalanche-2,polkadot,chainlink,tether,usd-coin';
+const COINGECKO_MAP  = {
+  bitcoin:'BTC', ethereum:'ETH', binancecoin:'BNB', solana:'SOL',
+  ripple:'XRP', cardano:'ADA', dogecoin:'DOGE', 'avalanche-2':'AVAX',
+  polkadot:'DOT', chainlink:'LINK', tether:'USDT', 'usd-coin':'USDC',
+};
+const COINGECKO_NAME = {
+  BTC:'Bitcoin', ETH:'Ethereum', BNB:'BNB', SOL:'Solana',
+  XRP:'XRP', ADA:'Cardano', DOGE:'Dogecoin', AVAX:'Avalanche',
+  DOT:'Polkadot', LINK:'Chainlink', USDT:'Tether', USDC:'USD Coin',
+};
+
 async function fetchPrices() {
   try {
-    const data = await fetchGAS('prices');
-    allPrices = data.prices || [];
-    renderPrices();
-    renderTicker();
-  } catch (e) {
-    console.error('fetchPrices error:', e);
+    // 1. ลองดึงจาก CoinGecko โดยตรงก่อน
+    const cgUrl = `https://api.coingecko.com/api/v3/simple/price?ids=${COINGECKO_IDS}&vs_currencies=usd&include_24hr_change=true&include_market_cap=true&include_24hr_vol=true`;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 15000);
+    const res = await fetch(cgUrl, { signal: controller.signal, cache: 'no-cache' });
+    clearTimeout(timer);
+
+    if (res.ok) {
+      const data = await res.json();
+      // แปลง CoinGecko format → allPrices format
+      const cgPrices = Object.entries(COINGECKO_MAP).map(([geckoId, symbol]) => {
+        const d = data[geckoId];
+        if (!d) return null;
+        return {
+          symbol,
+          name:        COINGECKO_NAME[symbol] || symbol,
+          price_usd:   d.usd || 0,
+          change_24h:  d.usd_24h_change || 0,
+          market_cap:  d.usd_market_cap || 0,
+          volume_24h:  d.usd_24h_vol || 0,
+        };
+      }).filter(Boolean);
+
+      // เพิ่ม TCC Token (ราคาคงที่)
+      cgPrices.push({ symbol:'TCC', name:'TCC Token', price_usd: TCC_TOKEN_PRICE, change_24h: 0, market_cap: 0, volume_24h: 0 });
+
+      allPrices = cgPrices;
+      console.log('[TCCReport] CoinGecko direct OK —', allPrices.length, 'coins');
+      renderPrices();
+      renderTicker();
+      return;
+    }
+  } catch (cgErr) {
+    console.warn('[TCCReport] CoinGecko direct failed:', cgErr.message, '→ fallback to GAS');
   }
+
+  // 2. Fallback: ดึงจาก GAS Sheet (ถ้า CoinGecko ไม่ตอบ — เช่น rate limit)
+  try {
+    const data = await fetchGAS('prices');
+    if (data.prices && data.prices.length > 0) {
+      // GAS มีข้อมูล → ใช้
+      allPrices = data.prices;
+      // เพิ่ม TCC ถ้ายังไม่มี
+      if (!allPrices.find(p => p.symbol === 'TCC')) {
+        allPrices.push({ symbol:'TCC', name:'TCC Token', price_usd: TCC_TOKEN_PRICE, change_24h: 0 });
+      }
+      console.log('[TCCReport] GAS prices fallback OK —', allPrices.length, 'coins');
+    } else {
+      console.warn('[TCCReport] GAS prices empty — Sheet Prices อาจว่าง (รัน fetchAllPrices ใน GAS ก่อน)');
+    }
+  } catch (e) {
+    console.error('[TCCReport] fetchPrices GAS fallback error:', e);
+  }
+
+  renderPrices();
+  renderTicker();
 }
 
 // ──────────────────────────────────────────────
