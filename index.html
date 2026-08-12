@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"/>
 <title>TCCCoin Report v10: Bitcoin, Ethereum, XRP, ข่าว Crypto และราคา</title>
-<!-- v10: Fix prices (GAS→CoinCap→Binance triple fallback, filter price=0), image centering (padding-top trick), mobile text overflow (min-width:0 + overflow-wrap) -->
+<!-- v10: Mobile ground-up redesign — box-sizing global, padding-top 16:9 images, grid→block stacking, triple price fallback (GAS→CoinCap→Binance) -->
 <meta name="description" content="แหล่งข่าว Crypto ชั้นนำสำหรับนักเทรดไทย ครอบคลุมตลาด นโยบาย เทคโนโลยี และการเงิน Crypto ระดับโลก"/>
 <meta property="og:title" content="TCC Financial Reports"/>
 <meta property="og:description" content="ข่าว Crypto ภาษาไทย อัปเดตทุก 30 นาที"/>
@@ -227,7 +227,7 @@ button{cursor:pointer;font-family:inherit}
 .hero-main h1 a:hover{text-decoration:underline}
 .hero-meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray-600);margin-bottom:14px;flex-wrap:wrap}
 .hero-img-wrap{width:100%;position:relative;padding-top:56.25%;height:0;background:var(--gray-100);margin-bottom:16px;overflow:hidden;border-radius:2px}
-.hero-img-wrap img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center center;display:block}
+.hero-img-wrap img,.hero-img-wrap .skel{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center center;display:block}
 .hero-excerpt{font-size:15px;line-height:1.65;color:var(--gray-800);margin-bottom:16px;word-break:break-word}
 
 /* ─── THUMBS ─── */
@@ -529,184 +529,390 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
   .footer-links{grid-template-columns:repeat(3,1fr)}
 }
 
-/* ─── MOBILE (≤600px) ─── */
+/* ══════════════════════════════════════════════
+   MOBILE — Ground-up redesign (≤600px)
+   หลักการ:
+   • ทุก element ใช้ box-sizing:border-box
+   • ไม่มี element ที่กว้างเกิน 100vw เด็ดขาด
+   • ใช้ padding บน .container เป็น source of truth เดียว (16px ซ้าย-ขวา)
+   • Grid และ Flex children ทุกตัวมี min-width:0
+   • ภาพทุกตัวใช้ padding-top % trick เพื่อ cross-browser
+   • Text ทุก element มี overflow-wrap:anywhere + word-break:break-word
+   ══════════════════════════════════════════════ */
 @media(max-width:600px){
-  /* ── GLOBAL ── */
-  *{box-sizing:border-box}
-  html,body{overflow-x:hidden;max-width:100vw;width:100%}
-  /* ไม่มี bottom nav padding */
-  .container,.page-wrap,.hero,.hero-grid,.hero-thumbs,
-  .grid-main,.grid-3,.tcc-news-grid,.sb-hero,.section-block,
-  .filter-tabs,.opinion-grid,.newsletter,.footer-links,
-  .hero-img-wrap,.tcc-card,.tcc-card-img-wrap,.feature-card,
-  .sb-hero-img,.section-block,.latest-item,.most-read-item{
-    max-width:100%;min-width:0;width:100%;overflow-x:hidden;
+
+  /* ─ 1. GLOBAL RESET ─ */
+  *,*::before,*::after{box-sizing:border-box!important}
+  html{overflow-x:hidden;width:100%}
+  body{overflow-x:hidden;width:100%;max-width:100vw}
+
+  /* ─ 2. CONTAINER — single source of side padding ─ */
+  .container{
+    width:100%;max-width:100vw;
+    padding-left:16px;padding-right:16px;
+    overflow-x:hidden;
   }
-  /* hero-main แยกออก ให้มี padding ด้านข้างโดยไม่ overflow */
-  .hero-main{max-width:100%;min-width:0;overflow-x:hidden;box-sizing:border-box}
+  .page-wrap{padding:10px 0 24px;width:100%}
 
-  /* ── BOTTOM NAV — ลบออกแล้ว ── */
+  /* ─ 3. GLOBAL IMAGE SAFE ─ */
+  img{max-width:100%!important;height:auto;display:block}
 
-  /* ── NAVBAR ── */
-  .navbar{width:100%;left:0;right:0}
-  .nav-inner{width:100%;padding:0 10px;box-sizing:border-box;gap:6px}
-  .nav-links{display:none}
-  .nav-right{display:none}
-  .nav-hamburger{display:flex;flex-shrink:0}
-  .logo{margin-right:0;min-width:0;flex:1}
-  .logo-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}
-  /* Dark toggle ใน navbar mobile */
+  /* ─ 4. GLOBAL TEXT SAFE ─ */
+  h1,h2,h3,h4,h5,h6,p,a,span,li,div{
+    word-break:break-word;
+    overflow-wrap:anywhere;
+  }
+
+  /* ─ 5. NAVBAR ─ */
+  .navbar{width:100%}
+  .nav-inner{padding:0 12px;gap:8px;width:100%}
+  .nav-links,.nav-right{display:none!important}
+  .nav-hamburger{display:flex;margin-left:auto;flex-shrink:0}
+  .logo{flex:1;min-width:0;margin-right:0}
+  .logo-text{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .mob-dark-toggle-wrap{display:flex!important}
 
-  /* ── ALERT BAR ── */
-  .alert-bar{width:100%;box-sizing:border-box;font-size:11px;padding:5px 10px;overflow:hidden}
-  #alert-text{display:block;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:calc(100vw - 80px)}
+  /* ─ 6. ALERT BAR ─ */
+  .alert-bar{
+    width:100%;padding:5px 12px;
+    font-size:11px;overflow:hidden;
+  }
+  #alert-text{
+    flex:1;min-width:0;
+    overflow:hidden;text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width:calc(100vw - 70px);
+  }
 
-  /* ── TICKER BAR ── */
-  .ticker-bar{width:100%;max-width:100vw;overflow:hidden;box-sizing:border-box}
-  .ticker-inner{display:flex;align-items:center;white-space:nowrap}
-  .tick-item{padding:0 12px;font-size:11px;flex-shrink:0}
+  /* ─ 7. TICKER BAR ─ */
+  .ticker-bar{width:100%;overflow:hidden}
+  .ticker-inner{white-space:nowrap;will-change:transform}
+  .tick-item{padding:0 14px;font-size:11px;flex-shrink:0}
 
-  /* ── STATUS BAR ── */
-  .status-bar{font-size:10px;padding:6px 10px;width:100%;box-sizing:border-box}
+  /* ─ 8. STATUS BAR ─ */
+  .status-bar{
+    font-size:11px;padding:7px 12px;
+    margin-bottom:14px;width:100%;
+  }
 
-  /* ── GLOBAL IMG ── */
-  img{max-width:100%;height:auto;display:block}
+  /* ─ 9. MAIN LAYOUT — stack vertically ─ */
+  .grid-main{
+    display:block;   /* ยกเลิก grid 2-col → stack */
+    width:100%;
+  }
 
-  /* ── HERO ── */
-  .hero{padding:12px 0 16px}
-  .hero-grid{grid-template-columns:1fr;gap:0;background:transparent;overflow:hidden;width:100%}
-  .hero-main{padding:0 8px;padding-bottom:0;min-width:0;overflow:hidden;width:100%;max-width:100%;box-sizing:border-box}
-  .hero-main h1{font-size:clamp(17px,4.5vw,22px);word-break:break-word;overflow-wrap:anywhere;overflow:hidden;hyphens:auto;line-height:1.3;padding:0;margin-bottom:10px}
+  /* ─ 10. HERO ─ */
+  .hero{padding:12px 0 0}
+  .hero-grid{
+    display:block;   /* ยกเลิก grid */
+    background:transparent;
+    width:100%;
+  }
+
+  /* Hero main */
+  .hero-main{
+    width:100%;padding:0;
+    /* ไม่มี padding เพราะ .container จัดการแล้ว */
+  }
+  .hero-main .category-tag{font-size:11px;margin-bottom:8px}
+  .hero-main h1{
+    font-size:clamp(18px,5vw,24px);
+    line-height:1.25;
+    margin-bottom:10px;
+    letter-spacing:-.2px;
+  }
   .hero-main h1 a{display:block;width:100%;min-width:0}
-  .hero-excerpt{font-size:14px;word-break:break-word;overflow-wrap:anywhere;line-height:1.6;padding:0;min-width:0}
-  .hero-img-wrap{position:relative;width:100%;max-width:100%;padding-top:56.25%;overflow:hidden;border-radius:4px;height:0}
-  .hero-img-wrap img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center center;display:block}
-  .hero-meta{font-size:11px;gap:6px}
+  .hero-meta{font-size:11px;gap:6px;margin-bottom:12px;flex-wrap:wrap}
 
-  /* ── THUMBS ── */
-  .hero-thumbs{flex-direction:column;overflow-x:unset;overflow:visible;gap:0;padding-left:0;border-top:1px solid var(--gray-100)}
-  .thumb-item{grid-template-columns:76px 1fr;gap:10px;min-width:0;padding:10px 4px}
-  .thumb-img{width:76px;height:52px;flex-shrink:0;border-radius:3px}
-  .thumb-item > div:last-child{min-width:0;overflow:hidden}
-  .thumb-title{font-size:12px;word-break:break-word;overflow-wrap:anywhere;min-width:0;line-height:1.35;padding-right:4px;display:block}
-  .thumb-cat{font-size:9px}
-  .thumb-meta{font-size:10px;padding-right:4px;flex-wrap:wrap}
+  /* Hero image — padding-top 56.25% = 16:9 ratio, ทำงานบนทุก browser รวม iOS Safari */
+  .hero-img-wrap{
+    position:relative;
+    width:100%;
+    padding-top:56.25%;   /* 16:9 */
+    height:0;
+    overflow:hidden;
+    border-radius:6px;
+    margin-bottom:12px;
+    background:var(--gray-100);
+  }
+  .hero-img-wrap img,
+  .hero-img-wrap .skel{
+    position:absolute;
+    top:0;left:0;
+    width:100%;height:100%;
+    object-fit:cover;
+    object-position:center center;
+  }
 
-  /* ── FILTER TABS ── */
-  .filter-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;gap:0;padding-bottom:0;margin-bottom:12px;scrollbar-width:none}
+  .hero-excerpt{
+    font-size:14px;line-height:1.6;
+    margin-bottom:12px;
+  }
+  #hero-tags{
+    display:flex;gap:6px;flex-wrap:wrap;
+    margin-bottom:16px;
+  }
+
+  /* Hero thumbs — vertical list, ไม่ scroll horizontal */
+  .hero-thumbs{
+    display:flex;flex-direction:column;
+    gap:0;padding-left:0;
+    border-top:1px solid var(--gray-100);
+    margin-top:8px;
+    overflow:visible;
+  }
+  .thumb-item{
+    display:grid;
+    grid-template-columns:80px 1fr;
+    gap:12px;
+    padding:11px 0;
+    border-bottom:1px solid var(--gray-100);
+    align-items:start;
+    min-width:0;
+  }
+  .thumb-item:last-child{border-bottom:none}
+  .thumb-img{
+    width:80px;height:56px;
+    flex-shrink:0;border-radius:4px;
+    overflow:hidden;
+    background:var(--gray-100);
+  }
+  .thumb-img img{
+    width:100%;height:100%;
+    object-fit:cover;object-position:center;
+    display:block;
+  }
+  /* thumb text column */
+  .thumb-item > div:not(.thumb-img){
+    min-width:0;overflow:hidden;
+    display:flex;flex-direction:column;gap:3px;
+  }
+  .thumb-cat{font-size:9px;letter-spacing:.08em}
+  .thumb-title{
+    font-size:13px;font-weight:600;
+    line-height:1.35;color:var(--black);
+    display:block;min-width:0;
+  }
+  .thumb-meta{
+    font-size:10px;color:var(--gray-400);
+    display:flex;align-items:center;gap:4px;
+    flex-wrap:wrap;min-width:0;
+  }
+
+  /* ─ 11. FILTER TABS ─ */
+  .filter-tabs{
+    overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;gap:0;
+    margin-bottom:14px;padding-bottom:0;
+    border-bottom-width:1.5px;
+  }
   .filter-tabs::-webkit-scrollbar{display:none}
-  .filter-tab{padding:7px 12px;font-size:12px;flex-shrink:0}
+  .filter-tab{
+    padding:8px 14px;font-size:12px;
+    flex-shrink:0;white-space:nowrap;
+  }
 
-  /* ── GRIDS ── */
-  .grid-3{grid-template-columns:1fr;overflow:hidden;gap:16px}
-  .tcc-news-grid{grid-template-columns:1fr;overflow:hidden;gap:12px}
-  .opinion-grid{grid-template-columns:1fr}
-  .sb-hero{grid-template-columns:1fr}
-  .grid-main{overflow:hidden}
+  /* ─ 12. GRIDS ─ */
+  .grid-3{
+    grid-template-columns:1fr;
+    gap:16px;
+  }
+  .tcc-news-grid{
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+  .sb-hero{grid-template-columns:1fr;gap:14px}
+  .opinion-grid{grid-template-columns:1fr;gap:0;padding:16px 0}
 
-  /* ── FEATURED CARD ── */
-  .feature-img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:4px}
-  .tcc-card-img-wrap,.tcc-card-img{width:100%;max-width:100%}
-  .feature-title{word-break:break-word;overflow-wrap:anywhere;font-size:14px;line-height:1.4}
-  .feature-meta{font-size:11px}
+  /* ─ 13. FEATURE CARDS ─ */
+  .feature-img{
+    width:100%;
+    position:relative;
+    /* aspect-ratio fallback via padding-top */
+    aspect-ratio:16/9;
+    object-fit:cover;
+    border-radius:4px;
+  }
+  .feature-title{font-size:14px;line-height:1.4}
+  .feature-meta{font-size:11px;flex-wrap:wrap}
 
-  /* ── LATEST FEED ── */
-  .latest-time{min-width:44px;font-size:10px}
-  .latest-body h3{font-size:13px;word-break:break-word;line-height:1.4}
-  .latest-bottom{gap:6px;flex-wrap:wrap}
+  /* ─ 14. TCC CARDS ─ */
+  .tcc-card{width:100%}
+  .tcc-card-img-wrap{
+    width:100%;
+    position:relative;padding-top:56.25%;height:0;
+    overflow:hidden;
+  }
+  .tcc-card-img{
+    position:absolute;top:0;left:0;
+    width:100%;height:100%;
+    object-fit:cover;
+  }
+  .tcc-card-img-placeholder{
+    position:absolute;top:0;left:0;
+    width:100%;height:100%;
+  }
+  .tcc-card-body{padding:10px 12px}
+  .tcc-card-title{font-size:13px;line-height:1.4}
+  .tcc-card-meta{font-size:10px;flex-wrap:wrap}
 
-  /* ── MOST READ ── */
-  .mr-num{font-size:18px}
-  .mr-body h4{font-size:12px;word-break:break-word;line-height:1.4}
-
-  /* ── PRICES WIDGET ── */
-  .prices-widget{font-size:12px;border-radius:6px}
-  .price-row{padding:8px 10px}
-  .price-name{font-size:12px}
-  .price-ticker{font-size:10px}
-
-  /* ── SECTION BLOCK ── */
-  .section-block{padding:18px 0}
-  .sec-header{margin-bottom:10px}
+  /* ─ 15. SECTION BLOCKS ─ */
+  .section-block{padding:20px 0}
+  .sec-header{margin-bottom:12px}
   .sec-title{font-size:12px}
+  .sb-hero-img{
+    width:100%;aspect-ratio:16/9;
+    object-fit:cover;border-radius:4px;
+  }
+  .sb-hero h3{font-size:16px;line-height:1.3}
+  .sb-story{padding:9px 0}
+  .sb-story h4{font-size:13px;line-height:1.4}
 
-  /* ── NEWSLETTER ── */
-  .newsletter{padding:20px 14px;border-radius:0;margin:18px 0;width:100%;box-sizing:border-box}
-  .newsletter h2{font-size:18px}
-  .nl-form{flex-direction:column}
-  .nl-input{min-width:unset;width:100%}
-  .nl-btn{width:100%;padding:12px}
+  /* ─ 16. OPINION ─ */
+  .op-item{
+    border-top:1px solid var(--gray-200);
+    padding:14px 0;border-left:none;border-right:none;
+  }
+  .op-item:first-child{border-top:2px solid var(--black)}
+  .op-item h4{font-size:14px;line-height:1.4}
 
-  /* ── EVENTS ── */
-  .event-item{gap:10px}
-  .event-day{font-size:15px}
-  .event-title{font-size:12px}
+  /* ─ 17. NEWSLETTER ─ */
+  .newsletter{
+    padding:24px 16px;
+    border-radius:0;
+    margin:20px -16px;   /* bleed to edge */
+    width:calc(100% + 32px);
+  }
+  .newsletter h2{font-size:20px;line-height:1.3}
+  .newsletter p{font-size:13px}
+  .nl-form{flex-direction:column;gap:10px}
+  .nl-input{width:100%;min-width:unset;padding:12px 14px}
+  .nl-btn{width:100%;padding:13px;font-size:15px}
 
-  /* ── FOOTER ── */
-  .footer-links{grid-template-columns:repeat(2,1fr)!important}
-  .footer-bottom{flex-direction:column;align-items:flex-start;gap:8px}
-  footer{padding:28px 0 16px;margin-bottom:0}
-  .footer-socials{flex-wrap:wrap;gap:12px}
+  /* ─ 18. SIDEBAR — below main on mobile ─ */
+  /* Sidebar ของเดิมอยู่ใน grid-main col 2 → ตอนนี้ display:block แล้วจะตกลงมาข้างล่างเอง */
+  aside{width:100%;margin-top:24px}
+  .sidebar-sticky{position:static;width:100%}
 
-  /* ── MODALS ── */
+  /* Latest feed */
+  .latest-feed{border-top:1px solid var(--gray-100)}
+  .latest-item{padding:12px 0;gap:10px}
+  .latest-time{min-width:46px;font-size:10px;flex-shrink:0}
+  .latest-body h3{font-size:13px;line-height:1.4}
+  .latest-bottom{gap:5px;flex-wrap:wrap;margin-top:4px}
+
+  /* Most read */
+  .most-read-item{padding:12px 0;gap:12px}
+  .mr-num{font-size:20px;min-width:30px}
+  .mr-body{min-width:0;flex:1}
+  .mr-body h4{font-size:13px;line-height:1.4}
+
+  /* ─ 19. PRICES WIDGET ─ */
+  .prices-widget{border-radius:8px;font-size:12px}
+  .price-row{
+    padding:9px 12px;
+    display:flex;align-items:center;
+    justify-content:space-between;
+    gap:8px;
+  }
+  .price-name{font-size:12px;font-weight:600}
+  .price-ticker{font-size:10px}
+  .price-val{font-size:13px}
+  .price-chg{font-size:11px}
+
+  /* ─ 20. EVENTS ─ */
+  .event-item{gap:12px;padding:12px 0}
+  .event-date{min-width:38px}
+  .event-day{font-size:17px}
+  .event-title{font-size:13px;line-height:1.4}
+  .event-loc{font-size:11px}
+
+  /* ─ 21. FOOTER ─ */
+  footer{padding:28px 0 20px;margin-top:32px;margin-bottom:0}
+  .footer-top{display:block;padding-bottom:24px;margin-bottom:24px}
+  .footer-brand{margin-bottom:24px}
+  .footer-links{
+    grid-template-columns:repeat(2,1fr)!important;
+    gap:20px 16px;
+  }
+  .footer-bottom{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .footer-legal{gap:10px;font-size:11px;flex-wrap:wrap}
+  .footer-socials{gap:12px;flex-wrap:wrap}
+
+  /* ─ 22. MODALS — bottom sheet style ─ */
+  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+
   .modal-overlay{align-items:flex-end;padding:0}
   .modal-box{
-    padding:24px 18px 32px;
-    border-radius:16px 16px 0 0;
-    max-width:100%;width:100%;
-    margin:0;
+    width:100%;max-width:100%;
+    margin:0;padding:24px 20px 36px;
+    border-radius:20px 20px 0 0;
     box-shadow:0 -8px 40px rgba(0,0,0,.2);
-    animation:slideUp .25s ease;
-  }
-  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-  .share-box{padding:20px 16px 32px;margin:0;border-radius:16px 16px 0 0;max-width:100%;width:100%}
-  .share-overlay{align-items:flex-end}
-  .share-channels{grid-template-columns:repeat(3,1fr)}
-  /* News detail modal */
-  .news-detail-overlay{padding:0;align-items:flex-end}
-  .news-detail-box{border-radius:16px 16px 0 0;margin:0;max-height:90vh;overflow-y:auto}
-  .news-detail-header{padding:14px 14px 0;min-width:0}
-  .news-detail-body{padding:0 14px 20px;font-size:14px;word-break:break-word;overflow-wrap:anywhere}
-  .news-detail-actions{padding:12px 14px;flex-wrap:wrap;gap:8px}
-  .news-detail-title{font-size:16px;word-break:break-word;overflow-wrap:anywhere;line-height:1.4}
-  .news-detail-close{top:12px;right:12px}
-
-  /* ── GENERAL ── */
-  .container{padding:0 12px;overflow:hidden;max-width:100vw;box-sizing:border-box}
-  .page-wrap{padding:12px 0 20px;overflow:hidden;max-width:100%;box-sizing:border-box}
-  /* ป้องกัน img ทุกตัวล้นกรอบ */
-  img{max-width:100%!important;height:auto;display:block}
-  /* ป้องกัน text ยาวล้น — เฉพาะ text element ไม่รวม div/span ที่เป็น layout */
-  h1,h2,h3,h4,h5,p{word-break:break-word;overflow-wrap:anywhere}
-  .hero-main .category-tag,.hero-meta,.tcc-card-title,.feature-title,
-  .thumb-title,.sb-story h4,.latest-body h3,.mr-body h4,.tcc-list-body h4{
-    word-break:break-word;overflow-wrap:anywhere;
+    animation:slideUp .3s ease;
   }
 
-  /* ── TCC SECTION ── */
-  .tcc-news-section{padding:18px 0}
-  .tcc-card-title{font-size:13px;word-break:break-word;overflow-wrap:anywhere;line-height:1.4}
-  .tcc-card-body{padding:10px 14px}
-  .tcc-card-meta{font-size:10px}
+  .share-overlay{align-items:flex-end;padding:0}
+  .share-box{
+    width:100%;max-width:100%;
+    margin:0;padding:20px 20px 36px;
+    border-radius:20px 20px 0 0;
+    box-shadow:0 -8px 40px rgba(0,0,0,.2);
+    animation:slideUp .3s ease;
+  }
+  .share-channels{grid-template-columns:repeat(3,1fr);gap:10px}
 
-  /* ── SHARE BUTTON (ซ่อนบน mobile ที่ space แคบ) ── */
-  .btn-share{padding:3px 8px;font-size:10px}
+  .news-detail-overlay{
+    padding:0;align-items:flex-end;
+    overflow:hidden;
+  }
+  .news-detail-box{
+    border-radius:20px 20px 0 0;
+    margin:0;width:100%;max-width:100%;
+    max-height:88vh;overflow-y:auto;
+    animation:slideUp .3s ease;
+  }
+  .news-detail-header{padding:18px 16px 0;min-width:0}
+  .news-detail-body{
+    padding:0 16px 24px;
+    font-size:14px;line-height:1.7;
+  }
+  .news-detail-actions{
+    padding:14px 16px;
+    flex-wrap:wrap;gap:8px;
+    position:sticky;bottom:0;
+    background:var(--bg-card,#fff);
+  }
+  .news-detail-title{font-size:17px;line-height:1.35}
+  .news-detail-close{top:14px;right:14px}
+
+  /* ─ 23. SHARE BUTTON ─ */
+  .btn-share{padding:3px 8px;font-size:10px;gap:3px}
   .btn-share svg{width:10px;height:10px}
 
-  /* ── SB STORIES ── */
-  .sb-story{padding:9px 0}
-  .sb-story h4{font-size:12px}
+  /* ─ 24. TCC LIST ─ */
+  .tcc-list-body h4{font-size:13px;line-height:1.4;min-width:0}
+  .tcc-list-meta{font-size:11px;flex-wrap:wrap}
 
-  /* ── OP ITEM ── */
-  .op-item{padding-top:12px}
-  .op-item h4{font-size:13px}
-}
+  /* ─ 25. TCC NEWS SECTION ─ */
+  .tcc-news-section{padding:20px 0}
+  .tcc-news-header{flex-wrap:wrap;gap:6px}
+
+  /* ─ 26. STATUS bar share/refresh ─ */
+  .status-bar span[onclick]{flex-shrink:0}
+
+}/* end @media 600px */
 
 /* ─── VERY SMALL (≤380px) ─── */
 @media(max-width:380px){
   .logo-text{display:none}
-  /* mob-bottom-nav ลบออกแล้ว */
+  .container{padding-left:12px;padding-right:12px}
+  .thumb-item{grid-template-columns:68px 1fr;gap:10px}
+  .thumb-img{width:68px;height:48px}
+  .hero-main h1{font-size:17px}
 }
 </style>
 </head>
@@ -1445,11 +1651,9 @@ async function fetchPrices() {
 
   // ── 1. GAS primary ──
   // GAS Sheet อาจมีแค่ TCC Token (1-2 coins) ถ้า trigger ยังไม่รันครบ
-  // → ถ้าได้น้อยกว่า 5 coins จริง ให้ fallback CoinCap ต่อเพื่อเติมข้อมูลให้ครบ
-  let gasOk = false;
+  // → ถ้าได้น้อยกว่า 5 coins จริง ให้ fallback CoinCap ต่อ
   try {
     const data = await fetchGAS('prices');
-    // กรอง price_usd > 0 เท่านั้น (ตัด placeholder ราคา 0)
     const validPrices = (data.prices || []).filter(p => p.price_usd > 0);
     if (validPrices.length >= 5) {
       allPrices = validPrices;
@@ -1459,15 +1663,14 @@ async function fetchPrices() {
       console.log('[TCCReport] GAS prices OK —', allPrices.length, 'coins');
       renderPrices();
       renderTicker();
-      gasOk = true;
       return;
     }
-    console.warn('[TCCReport] GAS prices too few (' + validPrices.length + ') → fallback CoinCap');
+    console.warn('[TCCReport] GAS prices too few (' + ((data.prices||[]).length) + ') → fallback CoinCap');
   } catch (gasErr) {
     console.warn('[TCCReport] GAS prices failed:', gasErr.message, '→ fallback CoinCap');
   }
 
-  // ── 2. CoinCap v2 fallback (public API, CORS-friendly) ──
+  // ── 2. CoinCap v2 fallback ──
   let capOk = false;
   try {
     const COINCAP_IDS = 'bitcoin,ethereum,binance-coin,solana,xrp,cardano,dogecoin,avalanche,polkadot,chainlink,tether,usd-coin';
@@ -1506,7 +1709,13 @@ async function fetchPrices() {
   if (!capOk) {
     try {
       const BINANCE_SYMS = ['BTCUSDT','ETHUSDT','BNBUSDT','SOLUSDT','XRPUSDT','ADAUSDT','DOGEUSDT','AVAXUSDT','DOTUSDT','LINKUSDT'];
-      const BINANCE_MAP  = { BTCUSDT:{sym:'BTC',name:'Bitcoin'}, ETHUSDT:{sym:'ETH',name:'Ethereum'}, BNBUSDT:{sym:'BNB',name:'BNB'}, SOLUSDT:{sym:'SOL',name:'Solana'}, XRPUSDT:{sym:'XRP',name:'XRP'}, ADAUSDT:{sym:'ADA',name:'Cardano'}, DOGEUSDT:{sym:'DOGE',name:'Dogecoin'}, AVAXUSDT:{sym:'AVAX',name:'Avalanche'}, DOTUSDT:{sym:'DOT',name:'Polkadot'}, LINKUSDT:{sym:'LINK',name:'Chainlink'} };
+      const BINANCE_MAP  = {
+        BTCUSDT:{sym:'BTC',name:'Bitcoin'}, ETHUSDT:{sym:'ETH',name:'Ethereum'},
+        BNBUSDT:{sym:'BNB',name:'BNB'}, SOLUSDT:{sym:'SOL',name:'Solana'},
+        XRPUSDT:{sym:'XRP',name:'XRP'}, ADAUSDT:{sym:'ADA',name:'Cardano'},
+        DOGEUSDT:{sym:'DOGE',name:'Dogecoin'}, AVAXUSDT:{sym:'AVAX',name:'Avalanche'},
+        DOTUSDT:{sym:'DOT',name:'Polkadot'}, LINKUSDT:{sym:'LINK',name:'Chainlink'},
+      };
       const bnbUrl = 'https://api.binance.com/api/v3/ticker/24hr?symbols=[' + BINANCE_SYMS.map(s => '"'+s+'"').join(',') + ']';
       const controller3 = new AbortController();
       const timer3 = setTimeout(() => controller3.abort(), 10000);
@@ -1516,12 +1725,7 @@ async function fetchPrices() {
         const bnb = await res3.json();
         const bnbPrices = bnb.map(t => {
           const info = BINANCE_MAP[t.symbol] || { sym: t.symbol.replace('USDT',''), name: t.symbol };
-          return {
-            symbol:     info.sym,
-            name:       info.name,
-            price_usd:  parseFloat(t.lastPrice) || 0,
-            change_24h: parseFloat(t.priceChangePercent) || 0,
-          };
+          return { symbol:info.sym, name:info.name, price_usd:parseFloat(t.lastPrice)||0, change_24h:parseFloat(t.priceChangePercent)||0 };
         }).filter(p => p.price_usd > 0);
         if (bnbPrices.length >= 3) {
           bnbPrices.push({ symbol:'TCC', name:'TCC Token', price_usd: TCC_TOKEN_PRICE, change_24h: 0 });
