@@ -20,7 +20,7 @@
 /* ─── RESET & BASE ─── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;overflow-x:hidden}
-body{font-family:'IBM Plex Sans Thai','DM Sans',sans-serif;font-size:15px;color:#1a1a1a;background:#fff;line-height:1.5;overflow-x:hidden;max-width:100vw}
+body{font-family:'IBM Plex Sans Thai','DM Sans',sans-serif;font-size:15px;color:var(--text-primary,#1a1a1a);background:var(--bg-page,#fff);line-height:1.5;overflow-x:hidden;max-width:100vw;transition:background .2s,color .2s}
 a{color:inherit;text-decoration:none}
 img{max-width:100%;height:auto;display:block}
 button{cursor:pointer;font-family:inherit}
@@ -33,7 +33,122 @@ button{cursor:pointer;font-family:inherit}
   --tcc-red:#e62e2e;--tcc-gold:#f5a623;
   --positive:#16a34a;--negative:#dc2626;--neutral:#6b7280;
   --nav-h:52px;--ticker-h:36px;
+  /* Light mode surface tokens */
+  --bg-page:#fff;--bg-card:#fff;--bg-surface:#f9f9f9;
+  --border-color:#e0e0e0;--border-subtle:#f0f0f0;
+  --text-primary:#1a1a1a;--text-secondary:#666;--text-muted:#999;
 }
+
+/* ─── DARK MODE ─── */
+[data-theme="dark"]{
+  --black:#f0f0f0;--white:#0f0f0f;
+  --gray-50:#1a1a1a;--gray-100:#242424;--gray-200:#333;
+  --gray-400:#666;--gray-600:#999;--gray-800:#ccc;
+  --bg-page:#0f0f0f;--bg-card:#1a1a1a;--bg-surface:#1a1a1a;
+  --border-color:#333;--border-subtle:#242424;
+  --text-primary:#f0f0f0;--text-secondary:#aaa;--text-muted:#666;
+  --positive:#4ade80;--negative:#f87171;
+}
+[data-theme="dark"] body{background:#0f0f0f;color:#f0f0f0}
+[data-theme="dark"] .navbar{background:#0f0f0f;border-bottom-color:#333}
+[data-theme="dark"] .alert-bar{background:#000}
+[data-theme="dark"] .ticker-bar{background:#000}
+[data-theme="dark"] .mobile-drawer-panel{background:#0f0f0f;border-right:1px solid #333}
+[data-theme="dark"] .mobile-drawer-header{border-bottom-color:#333}
+[data-theme="dark"] .mobile-nav-link{color:#ccc;border-bottom-color:#1a1a1a}
+[data-theme="dark"] .mobile-nav-link:active{background:#1a1a1a}
+[data-theme="dark"] .mobile-nav-section-label{color:#555}
+[data-theme="dark"] .mobile-drawer-auth{border-top-color:#333}
+[data-theme="dark"] .dropdown{background:#1a1a1a;border-color:#333;border-top-color:#e62e2e}
+[data-theme="dark"] .dropdown a{color:#ccc;border-bottom-color:#242424}
+[data-theme="dark"] .dropdown a:hover{background:#242424}
+[data-theme="dark"] .btn-signin{color:#f0f0f0;border-color:#444;background:#1a1a1a}
+[data-theme="dark"] .btn-signup{background:#f0f0f0;color:#0f0f0f;border-color:#f0f0f0}
+[data-theme="dark"] .hero-main{background:#0f0f0f}
+[data-theme="dark"] .hero-thumbs{background:#0f0f0f;border-top-color:#242424}
+[data-theme="dark"] .thumb-item{border-bottom-color:#242424}
+[data-theme="dark"] .thumb-img,.thumb-img{background:#1a1a1a}
+[data-theme="dark"] .feature-img{background:#1a1a1a}
+[data-theme="dark"] .sec-header{border-bottom-color:#333}
+[data-theme="dark"] .section-block{border-top-color:#242424}
+[data-theme="dark"] .status-bar{background:#1a1a1a;border-color:#333}
+[data-theme="dark"] .filter-tabs{border-bottom-color:#333}
+[data-theme="dark"] .filter-tab{color:#999}
+[data-theme="dark"] .filter-tab.active{color:#f0f0f0;border-bottom-color:#f0f0f0}
+[data-theme="dark"] .skel{background:linear-gradient(90deg,#242424 25%,#2d2d2d 50%,#242424 75%);background-size:200% 100%}
+[data-theme="dark"] .sb-hero-img,.sb-hero-img{background:#1a1a1a}
+[data-theme="dark"] .sb-story{border-bottom-color:#242424}
+[data-theme="dark"] .latest-item{border-bottom-color:#242424}
+[data-theme="dark"] .latest-item:first-child{border-top-color:#242424}
+[data-theme="dark"] .most-read-item{border-bottom-color:#242424}
+[data-theme="dark"] .mr-num{color:#333}
+[data-theme="dark"] .prices-widget{border-color:#333}
+[data-theme="dark"] .prices-tab{border-bottom-color:#333}
+[data-theme="dark"] .ptab{color:#999}
+[data-theme="dark"] .ptab.active{color:#f0f0f0;border-bottom-color:#f0f0f0}
+[data-theme="dark"] .price-row{border-bottom-color:#242424}
+[data-theme="dark"] .prices-more{border-top-color:#333;color:#999}
+[data-theme="dark"] .prices-more:hover{color:#f0f0f0}
+[data-theme="dark"] .event-item{border-bottom-color:#242424}
+[data-theme="dark"] .event-date{background:#f0f0f0;color:#000}
+[data-theme="dark"] .tcc-news-section{border-top-color:#e62e2e}
+[data-theme="dark"] .tcc-card{border-color:#333;background:#1a1a1a}
+[data-theme="dark"] .tcc-card:hover{border-color:#e62e2e}
+[data-theme="dark"] .tcc-list-item{border-bottom-color:#242424}
+[data-theme="dark"] .tcc-empty{border-color:#333;color:#666}
+[data-theme="dark"] .asset-tag{background:#242424;color:#ccc}
+[data-theme="dark"] .sentiment.neu,.sentiment.neutral{background:#242424;color:#999}
+[data-theme="dark"] .op-item{border-top-color:#333}
+[data-theme="dark"] .op-avatar{background:#333;color:#999}
+[data-theme="dark"] .newsletter{background:#1a1a1a}
+[data-theme="dark"] .nl-input{background:#0f0f0f;border-color:#444;color:#f0f0f0}
+[data-theme="dark"] .modal-box,.modal-box{background:#1a1a1a;color:#f0f0f0}
+[data-theme="dark"] .modal-close{color:#666}
+[data-theme="dark"] .modal-tab{color:#666}
+[data-theme="dark"] .modal-tab.active{color:#f0f0f0;border-bottom-color:#f0f0f0}
+[data-theme="dark"] .modal-tabs{border-bottom-color:#333}
+[data-theme="dark"] .form-input{background:#0f0f0f;border-color:#444;color:#f0f0f0}
+[data-theme="dark"] .form-input:focus{border-color:#f0f0f0}
+[data-theme="dark"] .form-label{color:#ccc}
+[data-theme="dark"] .btn-auth{background:#f0f0f0;color:#000}
+[data-theme="dark"] .share-box,.news-detail-box{background:#1a1a1a;color:#f0f0f0}
+[data-theme="dark"] .share-url-input{background:#0f0f0f;border-color:#444;color:#ccc}
+[data-theme="dark"] .share-ch{border-color:#333}
+[data-theme="dark"] .share-ch:hover{background:#242424;border-color:#666}
+[data-theme="dark"] .share-divider::before,.share-divider::after{background:#333}
+[data-theme="dark"] .share-divider{color:#666}
+[data-theme="dark"] .news-detail-box{background:#1a1a1a}
+[data-theme="dark"] .news-detail-actions{border-top-color:#333}
+[data-theme="dark"] .news-detail-close{color:#666}
+[data-theme="dark"] .news-detail-title{color:#f0f0f0}
+[data-theme="dark"] .news-detail-img{background:#242424}
+[data-theme="dark"] #nd-readmore{background:#f0f0f0;color:#000}
+[data-theme="dark"] #nd-share-btn{color:#f0f0f0;border-color:#444}
+[data-theme="dark"] .user-pill{background:#1a1a1a;border-color:#444}
+[data-theme="dark"] .user-dropdown{background:#1a1a1a;border-color:#333;border-top-color:#e62e2e}
+[data-theme="dark"] .user-dd-item{color:#ccc;border-bottom-color:#242424}
+[data-theme="dark"] .user-dd-item:hover{background:#242424}
+[data-theme="dark"] footer{background:#000;color:#888}
+[data-theme="dark"] .footer-top{border-bottom-color:#222}
+[data-theme="dark"] .fl-col h5{color:#ccc}
+[data-theme="dark"] .fl-col a{color:#555}
+[data-theme="dark"] .fl-col a:hover{color:#ccc}
+[data-theme="dark"] .footer-legal{color:#444}
+[data-theme="dark"] .footer-legal a{color:#444}
+[data-theme="dark"] .footer-legal a:hover{color:#aaa}
+[data-theme="dark"] .footer-socials a{color:#444}
+[data-theme="dark"] .footer-socials a:hover{color:#ccc}
+/* dark mode bottom nav */
+[data-theme="dark"] .mob-bottom-nav{background:#0f0f0f;border-top-color:#333}
+[data-theme="dark"] .mob-nav-btn{color:#555}
+[data-theme="dark"] .mob-nav-btn.active{color:#f0f0f0}
+[data-theme="dark"] .mob-nav-btn.active::after{background:#f0f0f0}
+[data-theme="dark"] .mob-fab{background:#e62e2e}
+/* dark toggle button */
+.dark-toggle{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:none;border:1.5px solid var(--gray-200);cursor:pointer;font-size:16px;transition:border-color .2s,background .2s;flex-shrink:0}
+.dark-toggle:hover{border-color:var(--black);background:var(--gray-50)}
+[data-theme="dark"] .dark-toggle{border-color:#444;background:#1a1a1a}
+[data-theme="dark"] .dark-toggle:hover{border-color:#666;background:#242424}
 
 /* ─── SKELETON LOADER ─── */
 .skel{background:linear-gradient(90deg,#e8e8e8 25%,#f5f5f5 50%,#e8e8e8 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:3px}
@@ -52,7 +167,7 @@ button{cursor:pointer;font-family:inherit}
 #alert-text{flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* ─── NAVBAR ─── */
-.navbar{position:sticky;top:0;z-index:999;background:#fff;border-bottom:2px solid var(--black);width:100%;left:0;right:0;box-sizing:border-box}
+.navbar{position:sticky;top:0;z-index:999;background:var(--bg-page,#fff);border-bottom:2px solid var(--black);width:100%;left:0;right:0;box-sizing:border-box;transition:background .2s}
 .nav-inner{max-width:1280px;margin:0 auto;height:var(--nav-h);display:flex;align-items:center;padding:0 16px}
 .logo{display:flex;align-items:center;gap:6px;margin-right:32px;flex-shrink:0}
 .logo-mark{width:28px;height:28px;background:var(--black);border-radius:4px;display:flex;align-items:center;justify-content:center}
@@ -65,7 +180,7 @@ button{cursor:pointer;font-family:inherit}
 .nav-item>a:hover,.nav-btn:hover{color:var(--black)}
 .nav-item.active>a{color:var(--black);border-bottom:2px solid var(--black)}
 .nav-chevron{font-size:9px;margin-top:1px;color:var(--gray-400)}
-.dropdown{display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid var(--gray-200);border-top:2px solid var(--black);min-width:180px;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,.1)}
+.dropdown{display:none;position:absolute;top:100%;left:0;background:var(--bg-page,#fff);border:1px solid var(--gray-200);border-top:2px solid var(--black);min-width:180px;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,.1)}
 .nav-item:hover .dropdown{display:block}
 .dropdown a{display:block;padding:10px 16px;font-size:13px;color:var(--gray-800);border-bottom:1px solid var(--gray-100);transition:background .1s}
 .dropdown a:hover{background:var(--gray-50)}
@@ -111,7 +226,7 @@ button{cursor:pointer;font-family:inherit}
 /* ─── HERO ─── */
 .hero{padding:24px 0 32px}
 .hero-grid{display:grid;grid-template-columns:1fr 380px;gap:1px;background:var(--gray-200);min-width:0;width:100%}
-.hero-main{background:#fff;padding-right:20px;min-width:0;overflow:hidden;width:100%;max-width:100%}
+.hero-main{background:var(--bg-page,#fff);padding-right:20px;min-width:0;overflow:hidden;width:100%;max-width:100%}
 .hero-main .category-tag{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tcc-red);margin-bottom:10px}
 .hero-main h1{font-size:clamp(22px,2.8vw,34px);font-weight:700;line-height:1.25;margin-bottom:12px;letter-spacing:-.3px;word-break:break-word}
 .hero-main h1 a:hover{text-decoration:underline}
@@ -121,7 +236,7 @@ button{cursor:pointer;font-family:inherit}
 .hero-excerpt{font-size:15px;line-height:1.65;color:var(--gray-800);margin-bottom:16px;word-break:break-word}
 
 /* ─── THUMBS ─── */
-.hero-thumbs{background:#fff;padding-left:20px;display:flex;flex-direction:column;gap:1px;min-width:0}
+.hero-thumbs{background:var(--bg-page,#fff);padding-left:20px;display:flex;flex-direction:column;gap:1px;min-width:0}
 .thumb-item{display:grid;grid-template-columns:100px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--gray-100)}
 .thumb-item:last-child{border:none}
 .thumb-img{width:100px;height:68px;background:var(--gray-100);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--gray-400);font-size:11px;overflow:hidden}
@@ -222,7 +337,7 @@ button{cursor:pointer;font-family:inherit}
 .page-wrap{padding:24px 0}
 
 /* ─── STATUS BAR ─── */
-.status-bar{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--gray-400);font-family:'IBM Plex Mono',monospace;margin-bottom:20px;padding:8px 12px;background:var(--gray-50);border-radius:4px;border:1px solid var(--gray-100)}
+.status-bar{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--gray-400);font-family:'IBM Plex Mono',monospace;margin-bottom:20px;padding:8px 12px;background:var(--bg-surface,#f9f9f9);border-radius:4px;border:1px solid var(--border-subtle,#f0f0f0)}
 .status-dot{width:7px;height:7px;border-radius:50%;background:var(--gray-400);flex-shrink:0}
 .status-dot.live{background:#4ade80;box-shadow:0 0 6px #4ade8088;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 6px #4ade8088}50%{box-shadow:0 0 12px #4ade80cc}}
@@ -269,7 +384,7 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 /* ─── AUTH MODAL ─── */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
 .modal-overlay.open{display:flex}
-.modal-box{background:#fff;border-radius:8px;width:100%;max-width:420px;padding:36px 32px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.18);animation:modalIn .2s ease}
+.modal-box{background:var(--bg-card,#fff);border-radius:8px;width:100%;max-width:420px;padding:36px 32px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.18);animation:modalIn .2s ease}
 @keyframes modalIn{from{transform:translateY(12px);opacity:0}to{transform:translateY(0);opacity:1}}
 .modal-close{position:absolute;top:14px;right:16px;font-size:20px;background:none;border:none;color:var(--gray-400);line-height:1;cursor:pointer;padding:4px}
 .modal-close:hover{color:var(--black)}
@@ -284,7 +399,7 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 .modal-tab.active{color:var(--black);border-bottom-color:var(--black)}
 .form-group{margin-bottom:14px}
 .form-label{display:block;font-size:12px;font-weight:600;margin-bottom:5px;color:var(--gray-800)}
-.form-input{width:100%;padding:9px 12px;font-size:14px;border:1.5px solid var(--gray-200);border-radius:6px;font-family:inherit;transition:border-color .15s;outline:none;color:var(--black);background:#fff}
+.form-input{width:100%;padding:9px 12px;font-size:14px;border:1.5px solid var(--gray-200);border-radius:6px;font-family:inherit;transition:border-color .15s;outline:none;color:var(--black);background:var(--bg-page,#fff)}
 .form-input:focus{border-color:var(--black)}
 .form-input.error{border-color:var(--tcc-red)}
 .form-error{font-size:11px;color:var(--tcc-red);margin-top:4px;display:none}
@@ -315,7 +430,7 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 .tcc-news-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tcc-red);display:flex;align-items:center;gap:8px}
 .tcc-news-badge{background:var(--tcc-red);color:#fff;font-size:9px;font-weight:700;letter-spacing:.1em;padding:2px 6px;border-radius:2px;animation:blink 1.8s step-end infinite}
 .tcc-news-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px}
-.tcc-card{border:1.5px solid var(--gray-200);border-radius:4px;overflow:hidden;transition:border-color .15s;display:flex;flex-direction:column}
+.tcc-card{border:1.5px solid var(--gray-200);border-radius:4px;overflow:hidden;transition:border-color .15s;display:flex;flex-direction:column;background:var(--bg-card,#fff)}
 .tcc-card:hover{border-color:var(--tcc-red)}
 .tcc-card-img-wrap{width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--gray-100);flex-shrink:0}
 .tcc-card-img{width:100%;height:100%;object-fit:cover;background:var(--gray-100);display:block}
@@ -346,7 +461,7 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 /* ─── SHARE MODAL ─── */
 .share-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:3000;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
 .share-overlay.open{display:flex}
-.share-box{background:#fff;border-radius:10px;width:100%;max-width:420px;padding:28px 28px 24px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.2);animation:modalIn .2s ease;margin:16px}
+.share-box{background:var(--bg-card,#fff);border-radius:10px;width:100%;max-width:420px;padding:28px 28px 24px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.2);animation:modalIn .2s ease;margin:16px}
 .share-close{position:absolute;top:14px;right:16px;font-size:20px;background:none;border:none;color:var(--gray-400);cursor:pointer;padding:4px;line-height:1}
 .share-close:hover{color:var(--black)}
 .share-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-400);margin-bottom:8px}
@@ -372,7 +487,7 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 /* ─── NEWS DETAIL MODAL ─── */
 .news-detail-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2500;align-items:flex-start;justify-content:center;overflow-y:auto;padding:32px 16px;backdrop-filter:blur(2px)}
 .news-detail-overlay.open{display:flex}
-.news-detail-box{background:#fff;border-radius:10px;width:100%;max-width:680px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.2);animation:modalIn .2s ease;margin:auto}
+.news-detail-box{background:var(--bg-card,#fff);border-radius:10px;width:100%;max-width:680px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.2);animation:modalIn .2s ease;margin:auto}
 .news-detail-header{padding:24px 28px 0}
 .news-detail-close{position:absolute;top:14px;right:16px;font-size:22px;background:none;border:none;color:var(--gray-400);cursor:pointer;line-height:1;padding:4px}
 .news-detail-close:hover{color:var(--black)}
@@ -386,7 +501,7 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 
 /* ─── HAMBURGER BUTTON ─── */
 .nav-hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;width:36px;height:36px;background:none;border:none;cursor:pointer;padding:6px;margin-left:auto;flex-shrink:0}
-.nav-hamburger span{display:block;height:2px;background:var(--black);border-radius:2px;transition:all .25s}
+.nav-hamburger span{display:block;height:2px;background:var(--text-primary,#1a1a1a);border-radius:2px;transition:all .25s}
 .nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 .nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
 .nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
@@ -395,9 +510,9 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 .mobile-drawer{display:none;position:fixed;inset:0;z-index:1500}
 .mobile-drawer.open{display:block}
 .mobile-drawer-overlay{position:absolute;inset:0;background:rgba(0,0,0,.4)}
-.mobile-drawer-panel{position:absolute;top:0;left:0;bottom:0;width:280px;background:#fff;overflow-y:auto;padding:16px 0;transform:translateX(-100%);transition:transform .25s ease;box-shadow:4px 0 24px rgba(0,0,0,.15)}
+.mobile-drawer-panel{position:absolute;top:0;left:0;bottom:0;width:280px;background:var(--bg-page,#fff);overflow-y:auto;padding:16px 0;transform:translateX(-100%);transition:transform .25s ease;box-shadow:4px 0 24px rgba(0,0,0,.15)}
 .mobile-drawer.open .mobile-drawer-panel{transform:translateX(0)}
-.mobile-drawer-header{display:flex;align-items:center;justify-content:space-between;padding:0 16px 16px;border-bottom:1px solid var(--gray-100)}
+.mobile-drawer-header{display:flex;align-items:center;justify-content:space-between;padding:0 16px 16px;border-bottom:1px solid var(--border-subtle,var(--gray-100))}
 .mobile-drawer-close{font-size:20px;background:none;border:none;cursor:pointer;color:var(--gray-400);padding:4px;line-height:1}
 .mobile-nav-section{padding:8px 0}
 .mobile-nav-section-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-400);padding:8px 16px 4px}
@@ -405,6 +520,37 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 .mobile-nav-link:active{background:var(--gray-50)}
 .mobile-nav-link.highlight{color:var(--tcc-red)}
 .mobile-drawer-auth{padding:16px;border-top:1px solid var(--gray-100);margin-top:8px;display:flex;flex-direction:column;gap:8px}
+
+/* ─── MOBILE BOTTOM NAV ─── */
+.mob-bottom-nav{
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:998;
+  background:#fff;border-top:1px solid var(--gray-200);
+  padding:0 0 env(safe-area-inset-bottom,0);
+  box-shadow:0 -4px 20px rgba(0,0,0,.08);
+}
+.mob-bottom-inner{display:flex;align-items:stretch;height:56px}
+.mob-nav-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;border:none;background:none;
+  cursor:pointer;font-family:inherit;color:var(--gray-400);
+  font-size:9px;font-weight:600;letter-spacing:.04em;
+  text-transform:uppercase;transition:color .15s;padding:0;position:relative;
+}
+.mob-nav-btn svg{width:20px;height:20px;stroke-width:1.8}
+.mob-nav-btn.active{color:var(--black)}
+.mob-nav-btn.active::after{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:28px;height:2px;background:var(--black);border-radius:0 0 2px 2px;
+}
+/* FAB center button */
+.mob-fab-wrap{flex:1;display:flex;align-items:center;justify-content:center;position:relative}
+.mob-fab{
+  width:44px;height:44px;border-radius:50%;background:var(--tcc-red);
+  color:#fff;border:none;cursor:pointer;font-size:22px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(230,46,46,.35);transition:transform .15s,box-shadow .15s;
+}
+.mob-fab:active{transform:scale(.93);box-shadow:0 2px 8px rgba(230,46,46,.3)}
 
 /* ─── TABLET (≤900px) ─── */
 @media(max-width:900px){
@@ -419,141 +565,172 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 
 /* ─── MOBILE (≤600px) ─── */
 @media(max-width:600px){
-  /* ── GLOBAL: ป้องกัน horizontal scroll ทุก element ── */
+  /* ── GLOBAL ── */
   *{box-sizing:border-box}
   html,body{overflow-x:hidden;max-width:100vw}
+  /* เพิ่ม padding ล่างสำหรับ bottom nav */
+  body{padding-bottom:calc(56px + env(safe-area-inset-bottom,0))}
   .container,.page-wrap,.hero,.hero-grid,.hero-main,.hero-thumbs,
   .grid-main,.grid-3,.tcc-news-grid,.sb-hero,.section-block,
   .filter-tabs,.opinion-grid,.newsletter,.footer-links{
     max-width:100%;min-width:0;width:100%;
   }
 
-  /* ── NAVBAR — เต็มพื้นที่หน้าจอทุกหน้า ── */
+  /* ── BOTTOM NAV — แสดงบนมือถือ ── */
+  .mob-bottom-nav{display:block}
+
+  /* ── NAVBAR ── */
   .navbar{width:100%;left:0;right:0}
-  .nav-inner{width:100%;padding:0 12px;box-sizing:border-box}
+  .nav-inner{width:100%;padding:0 10px;box-sizing:border-box;gap:6px}
   .nav-links{display:none}
   .nav-right{display:none}
   .nav-hamburger{display:flex;flex-shrink:0}
-  .logo{margin-right:auto;min-width:0;overflow:hidden}
-  .logo-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .logo{margin-right:0;min-width:0;flex:1}
+  .logo-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}
+  /* Dark toggle ใน navbar mobile */
+  .mob-dark-toggle-wrap{display:flex!important}
 
-  /* ── ALERT BAR — ข้อความเลื่อนแทนล้นออก ── */
-  .alert-bar{
-    width:100%;box-sizing:border-box;
-    font-size:11px;padding:5px 10px;
-    overflow:hidden;position:relative;
-  }
-  /* กล่อง alert-text จำกัดความกว้างและ clip ข้อความ */
-  #alert-text{
-    display:block;flex:1;min-width:0;
-    overflow:hidden;text-overflow:ellipsis;
-    white-space:nowrap;max-width:calc(100vw - 80px);
-  }
+  /* ── ALERT BAR ── */
+  .alert-bar{width:100%;box-sizing:border-box;font-size:11px;padding:5px 10px;overflow:hidden}
+  #alert-text{display:block;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:calc(100vw - 80px)}
 
-  /* ── TICKER BAR — ต้องไม่กว้างเกิน viewport ── */
+  /* ── TICKER BAR ── */
   .ticker-bar{width:100%;max-width:100vw;overflow:hidden;box-sizing:border-box}
-  .ticker-inner{
-    /* animation ทำงานปกติ แต่ container clip ไว้ */
-    display:flex;align-items:center;white-space:nowrap;
-  }
+  .ticker-inner{display:flex;align-items:center;white-space:nowrap}
   .tick-item{padding:0 12px;font-size:11px;flex-shrink:0}
 
   /* ── STATUS BAR ── */
   .status-bar{font-size:10px;padding:6px 10px;width:100%;box-sizing:border-box}
 
-  /* ── GLOBAL IMG — ไม่ล้นจอมือถือทุกกรณี ── */
+  /* ── GLOBAL IMG ── */
   img{max-width:100%;height:auto;display:block}
 
-  /* ── HERO — single column ── */
-  .hero{padding:16px 0 20px}
+  /* ── HERO ── */
+  .hero{padding:12px 0 16px}
   .hero-grid{grid-template-columns:1fr;gap:0;background:transparent;overflow:hidden;width:100%}
   .hero-main{padding-right:0;padding-bottom:0;min-width:0;overflow:hidden;width:100%;max-width:100%}
-  /* หัวข้อข่าว: ตัดคำได้ ไม่ล้นออก */
-  .hero-main h1{
-    font-size:clamp(16px,4.5vw,22px);
-    word-break:break-word;overflow-wrap:anywhere;
-    overflow:hidden;hyphens:auto;
-  }
+  .hero-main h1{font-size:clamp(17px,4.5vw,22px);word-break:break-word;overflow-wrap:anywhere;overflow:hidden;hyphens:auto;line-height:1.3}
   .hero-main h1 a{display:block;width:100%}
-  .hero-excerpt{font-size:14px;word-break:break-word;overflow-wrap:anywhere}
-  .hero-img-wrap{aspect-ratio:16/9;height:auto;width:100%;max-width:100%;overflow:hidden}
+  .hero-excerpt{font-size:14px;word-break:break-word;overflow-wrap:anywhere;line-height:1.6}
+  .hero-img-wrap{aspect-ratio:16/9;height:auto;width:100%;max-width:100%;overflow:hidden;border-radius:4px}
   .hero-img-wrap img{width:100%;height:100%;object-fit:cover}
+  .hero-meta{font-size:11px;gap:6px}
 
-  /* ── THUMBS — vertical list ── */
-  .hero-thumbs{flex-direction:column;overflow-x:unset;overflow:visible;gap:0;padding-left:0;background:#fff;border-top:1px solid var(--gray-100)}
-  .thumb-item{grid-template-columns:80px 1fr;gap:10px;min-width:0}
-  .thumb-img{width:80px;height:54px;flex-shrink:0}
-  .thumb-title{word-break:break-word;overflow-wrap:anywhere;min-width:0}
+  /* ── THUMBS ── */
+  .hero-thumbs{flex-direction:column;overflow-x:unset;overflow:visible;gap:0;padding-left:0;border-top:1px solid var(--gray-100)}
+  .thumb-item{grid-template-columns:76px 1fr;gap:10px;min-width:0;padding:10px 0}
+  .thumb-img{width:76px;height:52px;flex-shrink:0;border-radius:3px}
+  .thumb-title{font-size:12px;word-break:break-word;overflow-wrap:anywhere;min-width:0;line-height:1.35}
+  .thumb-cat{font-size:9px}
+  .thumb-meta{font-size:10px}
 
   /* ── FILTER TABS ── */
-  .filter-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;gap:0;padding-bottom:0;margin-bottom:14px;scrollbar-width:none}
+  .filter-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;gap:0;padding-bottom:0;margin-bottom:12px;scrollbar-width:none}
   .filter-tabs::-webkit-scrollbar{display:none}
-  .filter-tab{padding:8px 10px;font-size:12px;flex-shrink:0}
+  .filter-tab{padding:7px 12px;font-size:12px;flex-shrink:0}
 
   /* ── GRIDS ── */
-  .grid-3{grid-template-columns:1fr;overflow:hidden}
-  .tcc-news-grid{grid-template-columns:1fr;overflow:hidden}
+  .grid-3{grid-template-columns:1fr;overflow:hidden;gap:16px}
+  .tcc-news-grid{grid-template-columns:1fr;overflow:hidden;gap:12px}
   .opinion-grid{grid-template-columns:1fr}
   .sb-hero{grid-template-columns:1fr}
   .grid-main{overflow:hidden}
 
-  /* ── FEATURED CARD — title ไม่ล้น ── */
-  .feature-img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+  /* ── FEATURED CARD ── */
+  .feature-img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:4px}
   .tcc-card-img-wrap,.tcc-card-img{width:100%;max-width:100%}
-  .feature-title{word-break:break-word;overflow-wrap:anywhere;font-size:14px}
+  .feature-title{word-break:break-word;overflow-wrap:anywhere;font-size:14px;line-height:1.4}
+  .feature-meta{font-size:11px}
 
   /* ── LATEST FEED ── */
-  .latest-time{min-width:48px;font-size:10px}
-  .latest-body h3{font-size:13px;word-break:break-word}
+  .latest-time{min-width:44px;font-size:10px}
+  .latest-body h3{font-size:13px;word-break:break-word;line-height:1.4}
+  .latest-bottom{gap:6px;flex-wrap:wrap}
 
   /* ── MOST READ ── */
   .mr-num{font-size:18px}
-  .mr-body h4{font-size:12px;word-break:break-word}
+  .mr-body h4{font-size:12px;word-break:break-word;line-height:1.4}
 
   /* ── PRICES WIDGET ── */
-  .prices-widget{font-size:12px}
+  .prices-widget{font-size:12px;border-radius:6px}
   .price-row{padding:8px 10px}
+  .price-name{font-size:12px}
+  .price-ticker{font-size:10px}
 
   /* ── SECTION BLOCK ── */
-  .section-block{padding:20px 0}
-  .sec-header{margin-bottom:12px}
+  .section-block{padding:18px 0}
+  .sec-header{margin-bottom:10px}
+  .sec-title{font-size:12px}
 
   /* ── NEWSLETTER ── */
-  .newsletter{padding:22px 16px;border-radius:0;margin:20px -12px}
-  .newsletter h2{font-size:20px}
+  .newsletter{padding:20px 14px;border-radius:0;margin:18px -12px}
+  .newsletter h2{font-size:18px}
   .nl-form{flex-direction:column}
   .nl-input{min-width:unset;width:100%}
-  .nl-btn{width:100%}
+  .nl-btn{width:100%;padding:12px}
 
   /* ── EVENTS ── */
   .event-item{gap:10px}
   .event-day{font-size:15px}
+  .event-title{font-size:12px}
 
   /* ── FOOTER ── */
   .footer-links{grid-template-columns:repeat(2,1fr)!important}
   .footer-bottom{flex-direction:column;align-items:flex-start;gap:8px}
-  footer{padding:32px 0 20px}
+  footer{padding:28px 0 16px;margin-bottom:0}
+  .footer-socials{flex-wrap:wrap;gap:12px}
 
-  /* ── MODALS — ไม่ล้น viewport ── */
-  .modal-box{padding:24px 18px;border-radius:6px;max-width:calc(100vw - 24px);box-sizing:border-box}
-  .share-box{padding:20px 16px;margin:12px;box-sizing:border-box}
-  .share-channels{grid-template-columns:repeat(3,1fr)}
-  /* News detail modal — title ไม่ล้น */
-  .news-detail-header{padding:16px 16px 0;min-width:0}
-  .news-detail-body{padding:0 16px 20px;font-size:14px;word-break:break-word;overflow-wrap:anywhere}
-  .news-detail-actions{padding:12px 16px;flex-wrap:wrap}
-  .news-detail-title{
-    font-size:17px;word-break:break-word;
-    overflow-wrap:anywhere;line-height:1.4;
+  /* ── MODALS ── */
+  .modal-overlay{align-items:flex-end;padding:0}
+  .modal-box{
+    padding:24px 18px 32px;
+    border-radius:16px 16px 0 0;
+    max-width:100%;width:100%;
+    margin:0;
+    box-shadow:0 -8px 40px rgba(0,0,0,.2);
+    animation:slideUp .25s ease;
   }
+  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .share-box{padding:20px 16px 32px;margin:0;border-radius:16px 16px 0 0;max-width:100%;width:100%}
+  .share-overlay{align-items:flex-end}
+  .share-channels{grid-template-columns:repeat(3,1fr)}
+  /* News detail modal */
+  .news-detail-overlay{padding:0;align-items:flex-end}
+  .news-detail-box{border-radius:16px 16px 0 0;margin:0;max-height:90vh;overflow-y:auto}
+  .news-detail-header{padding:14px 14px 0;min-width:0}
+  .news-detail-body{padding:0 14px 20px;font-size:14px;word-break:break-word;overflow-wrap:anywhere}
+  .news-detail-actions{padding:12px 14px;flex-wrap:wrap;gap:8px}
+  .news-detail-title{font-size:16px;word-break:break-word;overflow-wrap:anywhere;line-height:1.4}
+  .news-detail-close{top:12px;right:12px}
 
   /* ── GENERAL ── */
   .container{padding:0 12px;overflow:hidden}
-  .page-wrap{padding:16px 0;overflow:hidden}
+  .page-wrap{padding:12px 0 20px;overflow:hidden}
 
   /* ── TCC SECTION ── */
-  .tcc-news-section{padding:20px 0}
-  .tcc-card-title{font-size:13px;word-break:break-word;overflow-wrap:anywhere}
+  .tcc-news-section{padding:18px 0}
+  .tcc-card-title{font-size:13px;word-break:break-word;overflow-wrap:anywhere;line-height:1.4}
+  .tcc-card-body{padding:10px 12px}
+  .tcc-card-meta{font-size:10px}
+
+  /* ── SHARE BUTTON (ซ่อนบน mobile ที่ space แคบ) ── */
+  .btn-share{padding:3px 8px;font-size:10px}
+  .btn-share svg{width:10px;height:10px}
+
+  /* ── SB STORIES ── */
+  .sb-story{padding:9px 0}
+  .sb-story h4{font-size:12px}
+
+  /* ── OP ITEM ── */
+  .op-item{padding-top:12px}
+  .op-item h4{font-size:13px}
+}
+
+/* ─── VERY SMALL (≤380px) ─── */
+@media(max-width:380px){
+  .logo-text{display:none}
+  .mob-nav-btn span{display:none}
+  .mob-bottom-inner{height:52px}
 }
 </style>
 </head>
@@ -561,14 +738,28 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 
 <!-- ════════ CONFIG ════════ -->
 <script>
-// ✅ GAS Web App URL (deploy แล้ว)
+// ─────────────────────────────────────────────
+//  GAS Web App URL — อัปเดตหลัง redeploy ใหม่
+//  หาก URL นี้ 404 → ให้ไป Extensions > Apps Script > Deploy > New Deployment
+//  แล้วนำ URL ใหม่มาวางที่นี่
+// ─────────────────────────────────────────────
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwUsQEJ_oJ8PpwzlljBco4s0jCWRG_4RFkrd9m7tWBm9hRmuz917BXVDofwWd1sh3R0rA/exec';
+// ^ หาก 404: redeploy GAS แล้วใส่ URL ใหม่ด้านบน
 
 const TCC_TOKEN_PRICE = 0.085;
 
 // ตรวจสอบว่าเปิดจาก file:// หรือเปล่า
-// ถ้าใช่ → force DEMO mode เพราะ Chrome บล็อค JSONP จาก file://
 const IS_LOCAL_FILE = window.location.protocol === 'file:';
+
+// ── GAS Health check: แสดง console warning ถ้า URL ดูเหมือน expired ──
+(function checkGasUrl() {
+  if (!GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
+    console.warn('[TCC] GAS_URL ยังไม่ได้ตั้งค่า — ทำงานใน Demo mode');
+  } else {
+    console.info('[TCC] GAS_URL:', GAS_URL.substring(0,60) + '...');
+    console.info('[TCC] ถ้าเห็น 404 → redeploy GAS ใหม่และอัปเดต URL ใน <script> config');
+  }
+})();
 </script>
 <!-- ═══════════════════════════════════════ -->
 
@@ -617,6 +808,9 @@ const IS_LOCAL_FILE = window.location.protocol === 'file:';
       <button class="btn-signin" onclick="openModal('login')">เข้าสู่ระบบ</button>
       <button class="btn-signup" onclick="openModal('register')">สมัครสมาชิก</button>
     </div>
+    <!-- Dark mode toggle (desktop always visible, mobile visible in nav) -->
+    <button class="dark-toggle" id="dark-toggle-btn" onclick="toggleDarkMode()" title="สลับโหมดมืด/สว่าง" aria-label="Dark mode toggle" style="margin-left:8px">🌙</button>
+    <div class="mob-dark-toggle-wrap" style="display:none"></div>
     <button class="nav-hamburger" id="nav-hamburger" onclick="toggleDrawer()" aria-label="เมนู">
       <span></span><span></span><span></span>
     </button>
@@ -654,6 +848,14 @@ const IS_LOCAL_FILE = window.location.protocol === 'file:';
       <a class="mobile-nav-link" href="#" onclick="closeDrawer()">วิเคราะห์</a>
       <a class="mobile-nav-link" href="#" onclick="closeDrawer()">วิจัย</a>
       <a class="mobile-nav-link" href="#" onclick="closeDrawer()">อีเวนต์</a>
+    </div>
+    <!-- Dark mode toggle ใน drawer -->
+    <div style="padding:12px 16px;border-top:1px solid var(--gray-100)">
+      <button onclick="toggleDarkMode()" style="display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:6px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:var(--gray-800)">
+        <span id="drawer-dark-icon">🌙</span>
+        <span id="drawer-dark-text">โหมดมืด</span>
+        <span id="drawer-dark-status" style="margin-left:auto;font-size:11px;color:var(--gray-400)">ปิด</span>
+      </button>
     </div>
     <div class="mobile-drawer-auth" id="mobile-drawer-auth">
       <button class="btn-signup" style="width:100%;padding:10px" onclick="closeDrawer();openModal('login')">เข้าสู่ระบบ</button>
@@ -899,6 +1101,34 @@ const IS_LOCAL_FILE = window.location.protocol === 'file:';
 </div><!-- /page-wrap -->
 </div><!-- /container -->
 
+<!-- ════════ MOBILE BOTTOM NAV ════════ -->
+<nav class="mob-bottom-nav" id="mob-bottom-nav" aria-label="Mobile Navigation">
+  <div class="mob-bottom-inner">
+    <button class="mob-nav-btn active" id="mobnav-home" onclick="mobNavGo('home')" aria-label="หน้าหลัก">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>หน้าหลัก</span>
+    </button>
+    <button class="mob-nav-btn" id="mobnav-prices" onclick="mobNavGo('prices')" aria-label="ราคา">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span>ราคา</span>
+    </button>
+    <!-- FAB center -->
+    <div class="mob-fab-wrap">
+      <button class="mob-fab" onclick="mobNavGo('tccnews')" aria-label="TCC News">
+        📣
+      </button>
+    </div>
+    <button class="mob-nav-btn" id="mobnav-news" onclick="mobNavGo('news')" aria-label="ข่าว">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/></svg>
+      <span>ข่าว</span>
+    </button>
+    <button class="mob-nav-btn" id="mobnav-menu" onclick="toggleDrawer()" aria-label="เมนู">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <span>เมนู</span>
+    </button>
+  </div>
+</nav>
+
 <!-- FOOTER -->
 <footer>
   <div class="container">
@@ -1114,7 +1344,7 @@ function setStatus(state, text) {
 //  Promise.all 4 concurrent → browser abort → เปลี่ยนเป็น sequential + retry
 // ──────────────────────────────────────────────
 async function fetchGAS(action, params = {}) {
-  // ── DEMO MODE ──
+  // ── DEMO / LOCAL MODE ──
   if (!GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE' || IS_LOCAL_FILE) {
     if (IS_LOCAL_FILE) console.info(`[TCCReport] file:// → Demo (${action})`);
     await new Promise(r => setTimeout(r, 300));
@@ -1130,8 +1360,7 @@ async function fetchGAS(action, params = {}) {
   for (let attempt = 1; attempt <= MAX_RETRY; attempt++) {
     try {
       const controller = new AbortController();
-      // GAS cold start อาจใช้ 15-20s — ให้ 35s
-      const timer = setTimeout(() => controller.abort(), 35000);
+      const timer = setTimeout(() => controller.abort(), 30000);
       const res = await fetch(url, {
         method: 'GET',
         signal: controller.signal,
@@ -1139,22 +1368,35 @@ async function fetchGAS(action, params = {}) {
         cache: 'no-cache',
       });
       clearTimeout(timer);
+
+      // ── 404 = GAS URL หมดอายุ / ถูกลบ ──
+      if (res.status === 404) {
+        console.error(`[TCCReport] ❌ GAS 404 — URL หมดอายุหรือถูกลบ กรุณา redeploy GAS และอัปเดต GAS_URL`);
+        if (attempt === MAX_RETRY) {
+          setStatus('error', '⚠️ GAS URL หมดอายุ — กรุณา redeploy GAS ใหม่');
+        }
+        // ไม่ retry 404 เพราะเป็น permanent error
+        break;
+      }
+
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      console.log(`[TCCReport] fetch OK: ${action} (attempt ${attempt})`);
+      console.log(`[TCCReport] ✅ fetch OK: ${action} (attempt ${attempt})`);
       return data;
     } catch (err) {
-      console.warn(`[TCCReport] fetch attempt ${attempt}/${MAX_RETRY} failed (${action}): ${err.message}`);
+      const isAbort = err.name === 'AbortError';
+      console.warn(`[TCCReport] fetch attempt ${attempt}/${MAX_RETRY} failed (${action}): ${isAbort ? 'timeout' : err.message}`);
       if (attempt < MAX_RETRY) {
-        // รอ 3s ก่อน retry เพื่อให้ GAS warm up
-        await new Promise(r => setTimeout(r, 3000));
+        await new Promise(r => setTimeout(r, 2500));
       }
     }
   }
 
   // ทุก attempt fail → fallback mock
   console.warn(`[TCCReport] ${action} all attempts failed → fallback mock`);
-  if (action === 'news') setStatus('error', 'GAS ตอบช้า — กำลัง retry อัตโนมัติ ทุก 5 นาที');
+  if (action === 'news' && !document.getElementById('status-dot').classList.contains('error')) {
+    setStatus('error', 'GAS ไม่ตอบสนอง — แสดงข้อมูลสำรอง (retry ทุก 5 นาที)');
+  }
   return getMockData(action);
 }
 
@@ -2185,6 +2427,86 @@ document.addEventListener('click', e => {
     dd.classList.remove('open');
   }
 });
+
+// ──────────────────────────────────────────────
+//  DARK MODE
+// ──────────────────────────────────────────────
+function initDarkMode() {
+  const saved = localStorage.getItem('tcc_theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark = saved ? saved === 'dark' : prefersDark;
+  applyDarkMode(isDark, false);
+}
+
+function toggleDarkMode() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  applyDarkMode(!isDark, true);
+}
+
+function applyDarkMode(isDark, save) {
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  const btn = document.getElementById('dark-toggle-btn');
+  const icon = document.getElementById('drawer-dark-icon');
+  const text = document.getElementById('drawer-dark-text');
+  const status = document.getElementById('drawer-dark-status');
+  if (btn)    btn.textContent = isDark ? '☀️' : '🌙';
+  if (icon)   icon.textContent = isDark ? '☀️' : '🌙';
+  if (text)   text.textContent = isDark ? 'โหมดสว่าง' : 'โหมดมืด';
+  if (status) status.textContent = isDark ? 'เปิด' : 'ปิด';
+  if (save)   localStorage.setItem('tcc_theme', isDark ? 'dark' : 'light');
+}
+
+// init dark mode ก่อนเนื้อหาโหลด
+initDarkMode();
+
+// ──────────────────────────────────────────────
+//  MOBILE BOTTOM NAV
+// ──────────────────────────────────────────────
+function mobNavGo(section) {
+  // อัปเดต active state
+  document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('mobnav-' + section);
+  if (btn) btn.classList.add('active');
+
+  if (section === 'home') {
+    window.scrollTo({top:0, behavior:'smooth'});
+  } else if (section === 'prices') {
+    const el = document.querySelector('.prices-widget');
+    if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+    else document.querySelector('.sidebar-sticky')?.scrollIntoView({behavior:'smooth'});
+  } else if (section === 'tccnews') {
+    const el = document.getElementById('section-tccnews');
+    if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  } else if (section === 'news') {
+    const el = document.getElementById('featured-grid');
+    if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+
+// ── Auto update bottom nav active on scroll ──
+(function() {
+  const sections = ['mobnav-home','mobnav-news','mobnav-prices'];
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        const pricesEl = document.querySelector('.prices-widget');
+        const newsEl = document.getElementById('featured-grid');
+        const pricesTop = pricesEl ? pricesEl.getBoundingClientRect().top + y - 100 : Infinity;
+        const newsTop   = newsEl   ? newsEl.getBoundingClientRect().top   + y - 100 : Infinity;
+        let active = 'mobnav-home';
+        if (y >= newsTop && y < pricesTop) active = 'mobnav-news';
+        else if (y >= pricesTop) active = 'mobnav-prices';
+        document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
+        const el = document.getElementById(active);
+        if (el) el.classList.add('active');
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, {passive:true});
+})();
 
 // ──────────────────────────────────────────────
 //  MOBILE DRAWER
