@@ -587,8 +587,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   refreshAll();
   // Auto refresh: prices ทุก 60 วินาที, news ทุก 5 นาที
-  setInterval(fetchPrices, 60_000);
-  setInterval(fetchNews,  5 * 60_000);
+  setInterval(fetchPrices, 60000);
+  setInterval(fetchNews,  5 * 60000);
 });
 
 async function refreshAll() {
@@ -633,7 +633,7 @@ function fetchGAS(action, params = {}) {
       script.remove();
       console.warn(`[TCCReport] ${action} timeout (25s) → fallback mock`);
       resolve(getMockData(action));
-    }, 25_000); // 25 วินาที — GAS redirect อาจใช้ 10-20s
+    }, 25000); // 25 วินาที — GAS redirect อาจใช้ 10-20s
 
     window[cbName] = (data) => {
       if (settled) return; // ถ้า timeout แล้ว ไม่ทำอะไร
