@@ -1085,7 +1085,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function refreshAll() {
   setStatus('loading', 'กำลังโหลดข้อมูล...');
-  await Promise.all([fetchNews(), fetchTCCNews(), fetchPrices(), fetchEvents()]);
+  // Sequential fetch — ป้องกัน browser abort 4 concurrent requests ไปยัง GAS เดียวกัน
+  // prices สำคัญสุด ดึงก่อน ส่วน news ใช้เวลานานสุด (50 rows)
+  await fetchPrices();
+  await fetchTCCNews();
+  await fetchEvents();
+  await fetchNews();   // news สุดท้าย — ใหญ่สุด แต่ไม่บล็อก prices/events
 }
 
 // ──────────────────────────────────────────────
@@ -1104,94 +1109,73 @@ function setStatus(state, text) {
 //  JSONP <script> injection ถูก CSP บล็อกบน GitHub Pages
 //  → ใช้ fetch() ก่อน (follow redirect ได้) แล้ว fallback เป็น JSONP ถ้า CORS error
 // ──────────────────────────────────────────────
+//  FETCH WRAPPER — fetch() only, retry 2x, no JSONP
+//  GAS GitHub Pages CSP บล็อก JSONP script injection
+//  Promise.all 4 concurrent → browser abort → เปลี่ยนเป็น sequential + retry
+// ──────────────────────────────────────────────
 async function fetchGAS(action, params = {}) {
   // ── DEMO MODE ──
   if (!GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE' || IS_LOCAL_FILE) {
     if (IS_LOCAL_FILE) console.info(`[TCCReport] file:// → Demo (${action})`);
-    await new Promise(r => setTimeout(r, 600));
+    await new Promise(r => setTimeout(r, 300));
     return getMockData(action);
   }
 
-  // ── ลบ _retry ออกจาก params จริง (ใช้แค่ภายใน) ──
-  const { _retry, ...cleanParams } = params;
-  const qs = new URLSearchParams({ action, ...cleanParams }).toString();
+  const cleanParams = { ...params };
+  delete cleanParams._retry;
+  const qs  = new URLSearchParams({ action, ...cleanParams }).toString();
   const url = `${GAS_URL}?${qs}`;
+  const MAX_RETRY = 2;
 
-  // ── PRIMARY: fetch() — follow redirect อัตโนมัติ, ไม่ติด CSP script-src ──
-  try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 25000);
-    const res = await fetch(url, {
-      method: 'GET',
-      signal: controller.signal,
-      redirect: 'follow',   // follow GAS redirect โดยอัตโนมัติ
-    });
-    clearTimeout(timer);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    console.log(`[TCCReport] fetch OK: ${action}`);
-    return data;
-  } catch (fetchErr) {
-    // CORS / network error → ลอง JSONP fallback ครั้งเดียว
-    if (!_retry) {
-      console.warn(`[TCCReport] fetch failed (${action}): ${fetchErr.message} → try JSONP`);
-      return fetchGAS_JSONP(action, cleanParams);
+  for (let attempt = 1; attempt <= MAX_RETRY; attempt++) {
+    try {
+      const controller = new AbortController();
+      // GAS cold start อาจใช้ 15-20s — ให้ 35s
+      const timer = setTimeout(() => controller.abort(), 35000);
+      const res = await fetch(url, {
+        method: 'GET',
+        signal: controller.signal,
+        redirect: 'follow',
+        cache: 'no-cache',
+      });
+      clearTimeout(timer);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      console.log(`[TCCReport] fetch OK: ${action} (attempt ${attempt})`);
+      return data;
+    } catch (err) {
+      console.warn(`[TCCReport] fetch attempt ${attempt}/${MAX_RETRY} failed (${action}): ${err.message}`);
+      if (attempt < MAX_RETRY) {
+        // รอ 3s ก่อน retry เพื่อให้ GAS warm up
+        await new Promise(r => setTimeout(r, 3000));
+      }
     }
-    // JSONP ก็ล้มเหลวแล้ว → คืน mock
-    console.warn(`[TCCReport] ${action} all methods failed → fallback mock`);
-    if (action === 'news') setStatus('error', 'โหลดข้อมูลไม่สำเร็จ — กรุณารีเฟรช');
-    return getMockData(action);
   }
-}
 
-// ── JSONP FALLBACK (ใช้เฉพาะเมื่อ fetch() CORS error) ──
-function fetchGAS_JSONP(action, params = {}) {
-  return new Promise((resolve) => {
-    const cbName = '_cb_' + action + '_' + Date.now();
-    const qs = new URLSearchParams({ action, callback: cbName, ...params }).toString();
-    const script = document.createElement('script');
-    let settled = false;
-
-    const timeout = setTimeout(() => {
-      if (settled) return;
-      settled = true;
-      window[cbName] = () => {};
-      script.remove();
-      console.warn(`[TCCReport] JSONP ${action} timeout → fallback mock`);
-      if (action === 'news') setStatus('error', 'โหลดข้อมูลช้า (timeout) — กรุณารีเฟรช');
-      resolve(getMockData(action));
-    }, 25000);
-
-    window[cbName] = (data) => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timeout);
-      setTimeout(() => { delete window[cbName]; script.remove(); }, 100);
-      resolve(data);
-    };
-
-    script.src = `${GAS_URL}?${qs}`;
-    script.onerror = () => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timeout);
-      window[cbName] = () => {};
-      script.remove();
-      console.warn(`[TCCReport] JSONP ${action} script error → fallback mock`);
-      if (action === 'news') setStatus('error', 'เชื่อมต่อ GAS ไม่ได้ — กรุณารีเฟรช');
-      resolve(getMockData(action));
-    };
-
-    document.head.appendChild(script);
-  });
+  // ทุก attempt fail → fallback mock
+  console.warn(`[TCCReport] ${action} all attempts failed → fallback mock`);
+  if (action === 'news') setStatus('error', 'GAS ตอบช้า — กำลัง retry อัตโนมัติ ทุก 5 นาที');
+  return getMockData(action);
 }
 
 // ──────────────────────────────────────────────
 //  FALLBACK DATA (เมื่อ GAS ไม่ตอบ — คืน empty เสมอ)
 // ──────────────────────────────────────────────
 function getMockData(action) {
-  // ไม่มี demo data — คืน empty state ให้ render จัดการเอง
-  if (action === 'prices')      return { prices: [] };
+  // Placeholder prices — แสดง skeleton ราคาล่าสุดที่ฝัง hardcode ไว้
+  // จะถูกแทนที่ด้วยข้อมูลจริงเมื่อ GAS ตอบกลับ
+  if (action === 'prices') return { prices: [
+    { symbol:'BTC',  name:'Bitcoin',   price_usd: 0, change_24h: 0 },
+    { symbol:'ETH',  name:'Ethereum',  price_usd: 0, change_24h: 0 },
+    { symbol:'BNB',  name:'BNB',       price_usd: 0, change_24h: 0 },
+    { symbol:'SOL',  name:'Solana',    price_usd: 0, change_24h: 0 },
+    { symbol:'XRP',  name:'XRP',       price_usd: 0, change_24h: 0 },
+    { symbol:'ADA',  name:'Cardano',   price_usd: 0, change_24h: 0 },
+    { symbol:'DOGE', name:'Dogecoin',  price_usd: 0, change_24h: 0 },
+    { symbol:'AVAX', name:'Avalanche', price_usd: 0, change_24h: 0 },
+    { symbol:'DOT',  name:'Polkadot',  price_usd: 0, change_24h: 0 },
+    { symbol:'LINK', name:'Chainlink', price_usd: 0, change_24h: 0 },
+  ]};
   if (action === 'tccnews')     return { tccnews: [] };
   if (action === 'events')      return { events: [] };
   if (action === 'getNewsById') return { news: null };
@@ -1575,6 +1559,7 @@ function renderPrices() {
 }
 
 function fmtPrice(price, symbol) {
+  if (!price || price === 0) return '—';
   if (price >= 1000) return '$' + price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   if (price >= 1)    return '$' + price.toFixed(2);
   return '$' + price.toFixed(4);
