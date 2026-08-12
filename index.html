@@ -5,10 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"/>
 <title>TCCCoin Report v11: Bitcoin, Ethereum, XRP, ข่าว Crypto และราคา</title>
 <!-- v11: Video Embed System — YouTube/Shorts | Facebook/Reels | TikTok (portrait) | Vimeo | Dailymotion | Twitch | Bilibili | PPTV/PPLive | Generic embed
-     GAS v22: TCCNews เพิ่มคอลัมน์ video_url | ส่งกลับใน tccnews + getNewsById actions -->
-<meta name="description" content="แหล่งข่าว Crypto ชั้นนำสำหรับนักเทรด ครอบคลุมตลาด นโยบาย เทคโนโลยี และการเงิน Crypto ระดับโลก"/>
+     GAS v22: TCCNews เพิ่มคอลัมน์ video_url | ส่งกลับใน tccnews + getNewsById actions
+     v12 (fix): Video ใช้ click-to-play (thumbnail + ปุ่ม Play → inject iframe ตอนกดเท่านั้น)
+     แก้ YouTube Error 153 โดยเปลี่ยน iframe referrerpolicy เป็น strict-origin-when-cross-origin
+     (ของเดิม no-referrer ทำให้ YouTube ตรวจสอบ origin ที่อนุญาต embed ไม่ได้)
+     แก้ mock data ที่มี TikTok/Facebook video ID ปลอม → ใช้รูป placeholder + ลิงก์แทน -->
+<meta name="description" content="แหล่งข่าว Crypto ชั้นนำสำหรับนักเทรดไทย ครอบคลุมตลาด นโยบาย เทคโนโลยี และการเงิน Crypto ระดับโลก"/>
 <meta property="og:title" content="TCC Financial Reports"/>
-<meta property="og:description" content="ข่าว Crypto อัปเดตทุก 30 นาที"/>
+<meta property="og:description" content="ข่าว Crypto ภาษาไทย อัปเดตทุก 30 นาที"/>
 <meta property="og:type" content="website"/>
 <meta name="referrer" content="no-referrer"/>
 <link rel="icon" type="image/png" href="https://i.ibb.co/7xc9KFL5/TCC-Small-1-Logo.png"/>
@@ -458,6 +462,16 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 /* square 1:1 */
 .vid-wrap[data-orient="square"]{aspect-ratio:1/1}
 .vid-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;display:block}
+/* click-to-play cover (ก่อนกด Play — ยังไม่โหลด iframe) */
+.vid-wrap.vid-cover{cursor:pointer}
+.vid-thumb{position:absolute;inset:0;width:100%;height:100%;background:linear-gradient(135deg,#1a1a1a 0%,#2a2a2a 100%);background-size:cover;background-position:center}
+.vid-play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;border-radius:50%;background:rgba(0,0,0,.55);border:2px solid rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;transition:background .15s,transform .15s;z-index:2}
+.vid-play-btn svg{margin-left:3px}
+.vid-wrap.vid-cover:hover .vid-play-btn{background:var(--tcc-red);transform:translate(-50%,-50%) scale(1.08)}
+/* fallback เมื่อวิดีโอเล่นไม่ได้ */
+.vid-fallback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:#151515;color:#ccc;text-align:center;padding:16px}
+.vid-fallback p{font-size:12px;color:#999;margin:0}
+.vid-fallback a{font-size:12px;font-weight:600;color:#fff;background:var(--tcc-red);padding:6px 14px;border-radius:20px}
 /* platform badge */
 .vid-platform{position:absolute;top:8px;left:8px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:3px;z-index:2;pointer-events:none;line-height:1.4}
 .vid-platform.yt  {background:#ff0000;color:#fff}
@@ -1632,22 +1646,22 @@ function getMockData(action) {
       asset_tags:['BTC','ETH'], image_url:'',
       video_url:'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
       source_type:'tcc' },
-    // card 2 — วิดีโอ TikTok (portrait — ขยาย full-width)
+    // card 2 — mock data นี้ไม่มี video ID จริง (ID สาธิต ไม่มีอยู่จริงบน TikTok)
+    // จึงใช้รูปภาพ placeholder แทนการฝัง iframe ที่จะพังแน่นอน — ของจริงจาก
+    // GAS Sheet (คอลัมน์ video_url) จะมี ID จริงและ embed ได้ปกติผ่าน buildVideoHtml()
     { id:'tcc002', timestamp: new Date(Date.now()-4*3600000).toISOString(),
       title_th:'TCC Token Q3/2026 — อัปเดตราคาและโรดแมป',
       title_en:'TCC Token Q3/2026 — Price & Roadmap Update',
-      url:'#', source:'TCC', category:'markets', sentiment:'positive',
-      asset_tags:[], image_url:'',
-      video_url:'https://www.tiktok.com/@tcc_crypto/video/7400000000000000001',
-      source_type:'tcc' },
-    // list 03 — วิดีโอ Facebook (landscape)
+      url:'https://www.tiktok.com/@tcc_crypto', source:'TCC', category:'markets', sentiment:'positive',
+      asset_tags:[], image_url:'https://i.ibb.co/ycVLd1vP/XQBp-X.jpg',
+      video_url:'', source_type:'tcc' },
+    // list 03 — เช่นเดียวกัน: mock ID Facebook นี้ไม่มีอยู่จริง ใช้รูป placeholder + ลิงก์แทน
     { id:'tcc003', timestamp: new Date(Date.now()-8*3600000).toISOString(),
       title_th:'ประกาศ: TCC Marketplace v24 ออกแล้ว',
       title_en:'Announcement: TCC Marketplace v24 Released',
-      url:'#', source:'TCC', category:'tech', sentiment:'positive',
-      asset_tags:[], image_url:'',
-      video_url:'https://www.facebook.com/watch?v=123456789012345',
-      source_type:'tcc' },
+      url:'https://www.facebook.com/tcccryptoofficial', source:'TCC', category:'tech', sentiment:'positive',
+      asset_tags:[], image_url:'https://i.ibb.co/ycVLd1vP/XQBp-X.jpg',
+      video_url:'', source_type:'tcc' },
     // list 04 — รูปภาพปกติ
     { id:'tcc004', timestamp: new Date(Date.now()-12*3600000).toISOString(),
       title_th:'แนะนำสมาชิกใหม่ — TCC Earn Contract รอบที่ 7',
@@ -2066,19 +2080,81 @@ function parseVideoUrl(url) {
 }
 
 /**
- * buildVideoHtml(v, extraClass)
- * สร้าง HTML wrapper สำหรับ embed iframe
+ * getVideoThumbnail(v)
+ * คืน URL รูป thumbnail ถ้ามี API สาธารณะที่เชื่อถือได้ (ตอนนี้รองรับ YouTube)
+ * แพลตฟอร์มอื่นไม่มี thumbnail API แบบไม่ต้อง auth → คืน null แล้วใช้ gradient + badge แทน
  */
-function buildVideoHtml(v, extraClass = '') {
+function getVideoThumbnail(v) {
+  if (v.platform === 'yt') {
+    const m = v.embed.match(/embed\/([A-Za-z0-9_-]{11})/);
+    if (m) return `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`;
+  }
+  return null;
+}
+
+// เก็บ metadata วิดีโอไว้ inject iframe ตอนกด Play (lazy iframe injection)
+// กัน error 153/CSP จากการโหลด iframe แพลตฟอร์มนอกทันทีตอน render และลดโหลดหน้า
+const _videoMetaStore = {};
+
+/**
+ * buildVideoHtml(v, newsId, extraClass)
+ * สร้าง HTML wrapper แบบ "click-to-play": แสดง thumbnail + ปุ่ม Play ก่อน
+ * ค่อย inject <iframe> จริงตอนผู้ใช้กด (ผ่าน playTccVideo)
+ */
+function buildVideoHtml(v, newsId, extraClass = '') {
   const badgeCls = v.platform || 'oth';
-  return `<div class="vid-wrap ${extraClass}" data-orient="${v.orient}">
+  const thumb = getVideoThumbnail(v);
+  const thumbBg = thumb ? `background-image:url('${thumb}')` : '';
+  _videoMetaStore[newsId] = v;
+  return `<div class="vid-wrap vid-cover ${extraClass}" data-orient="${v.orient}" data-vid-id="${newsId}" onclick="playTccVideo('${newsId}', this)">
+    <div class="vid-thumb" style="${thumbBg}"></div>
+    <button class="vid-play-btn" type="button" aria-label="เล่นวิดีโอ" onclick="event.stopPropagation();playTccVideo('${newsId}', this.closest('.vid-wrap'))">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+    <span class="vid-platform ${badgeCls}">${v.label}</span>
+  </div>`;
+}
+
+/**
+ * playTccVideo(newsId, wrapEl)
+ * เรียกเมื่อผู้ใช้กด thumbnail/ปุ่ม Play — inject iframe จริง ณ ตอนนั้น
+ * referrerpolicy ใช้ "strict-origin-when-cross-origin" (ไม่ใช้ no-referrer)
+ * เพราะ YouTube/Facebook/TikTok embed player ต้องใช้ referrer ตรวจสอบ origin
+ * ที่อนุญาต embed — no-referrer (รวมถึง <meta name="referrer" content="no-referrer">
+ * ของหน้านี้) คือสาเหตุที่ YouTube แสดง "Error 153 - เกิดข้อผิดพลาดในการกำหนดค่า
+ * วิดีโอเพลเยอร์" เพราะ player ตรวจสอบ referring origin ไม่ได้
+ */
+function playTccVideo(newsId, wrapEl) {
+  const v = _videoMetaStore[newsId];
+  if (!v || !wrapEl) return;
+  const badgeCls = v.platform || 'oth';
+  wrapEl.classList.remove('vid-cover');
+  wrapEl.onclick = null;
+  wrapEl.innerHTML = `
     <iframe
       src="${v.embed}"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
       allowfullscreen
-      loading="lazy"
       title="${v.label}"
-      referrerpolicy="no-referrer"></iframe>
+      referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    <span class="vid-platform ${badgeCls}">${v.label}</span>`;
+}
+
+/**
+ * videoFallbackHtml(v, originalUrl, extraClass)
+ * ใช้แทน buildVideoHtml เมื่อรู้อยู่แล้วว่า video_url ไม่ใช่วิดีโอจริง
+ * (เช่น mock/demo data) — แสดง thumbnail placeholder + ลิงก์ไปต้นทางแทนการฝัง iframe ที่จะพัง
+ */
+function videoFallbackHtml(v, originalUrl, extraClass = '') {
+  const badgeCls = v.platform || 'oth';
+  const linkHtml = (originalUrl && originalUrl !== '#')
+    ? `<a href="${originalUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">ดูที่ต้นทาง ↗</a>`
+    : `<p>ไม่พบวิดีโอต้นฉบับ</p>`;
+  return `<div class="vid-wrap ${extraClass}" data-orient="${v.orient}">
+    <div class="vid-fallback">
+      <p>ไม่สามารถแสดงตัวอย่างวิดีโอนี้ได้</p>
+      ${linkHtml}
+    </div>
     <span class="vid-platform ${badgeCls}">${v.label}</span>
   </div>`;
 }
@@ -2113,8 +2189,8 @@ function renderTCCNews() {
     // 2. สร้าง media block
     let mediaHtml;
     if (vidMeta) {
-      // วิดีโอ — embed iframe (ไม่ต้องกด openNewsDetail เพื่อเปิด)
-      mediaHtml = buildVideoHtml(vidMeta);
+      // วิดีโอ — click-to-play thumbnail (ไม่ต้องกด openNewsDetail เพื่อเปิด)
+      mediaHtml = buildVideoHtml(vidMeta, n.id);
     } else if (n.image_url) {
       mediaHtml = `<div class="tcc-card-img-wrap" style="cursor:pointer" onclick="openNewsDetail('${n.id}')">
            <img class="tcc-card-img" src="${n.image_url}" alt="${n.title_th || ''}" referrerpolicy="no-referrer"
@@ -2633,7 +2709,7 @@ function _renderNewsDetail(n) {
     const vidContainer = document.createElement('div');
     vidContainer.id = 'nd-vid-container';
     vidContainer.className = 'nd-vid-wrap';
-    vidContainer.innerHTML = buildVideoHtml(vidMeta);
+    vidContainer.innerHTML = buildVideoHtml(vidMeta, `nd-${n.id}`);
     imgEl.parentNode.insertBefore(vidContainer, imgEl);
   } else if (n.image_url) {
     imgEl.src = n.image_url; imgEl.style.display = 'block';
