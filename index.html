@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>TCCCoin Report: Bitcoin, Ethereum, XRP, ข่าว Crypto และราคา</title>
+<title>TCCCoin Report v7: Bitcoin, Ethereum, XRP, ข่าว Crypto และราคา</title>
+<!-- v7: Fix published filter robust | TCC News section แยก | asset_tags fix -->
 <meta name="description" content="แหล่งข่าว Crypto ชั้นนำสำหรับนักเทรดไทย ครอบคลุมตลาด นโยบาย เทคโนโลยี และการเงิน Crypto ระดับโลก"/>
 <meta property="og:title" content="TCCCoin Report"/>
 <meta property="og:description" content="ข่าว Crypto ภาษาไทย อัปเดตทุก 30 นาที"/>
@@ -305,13 +306,42 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 .user-dd-item:hover{background:var(--gray-50)}
 .user-dd-item.danger{color:var(--tcc-red)}
 
+/* ─── TCC NEWS SECTION ─── */
+.tcc-news-section{padding:28px 0;border-top:3px solid var(--tcc-red)}
+.tcc-news-header{display:flex;align-items:baseline;justify-content:space-between;border-bottom:2px solid var(--tcc-red);padding-bottom:8px;margin-bottom:16px}
+.tcc-news-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tcc-red);display:flex;align-items:center;gap:8px}
+.tcc-news-badge{background:var(--tcc-red);color:#fff;font-size:9px;font-weight:700;letter-spacing:.1em;padding:2px 6px;border-radius:2px;animation:blink 1.8s step-end infinite}
+.tcc-news-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px}
+.tcc-card{border:1.5px solid var(--gray-200);border-radius:4px;overflow:hidden;transition:border-color .15s;display:flex;flex-direction:column}
+.tcc-card:hover{border-color:var(--tcc-red)}
+.tcc-card-img{width:100%;height:140px;object-fit:cover;background:var(--gray-100);display:block}
+.tcc-card-img-placeholder{width:100%;height:140px;background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);display:flex;align-items:center;justify-content:center}
+.tcc-card-img-placeholder svg{opacity:.15}
+.tcc-card-body{padding:12px 14px;flex:1;display:flex;flex-direction:column;gap:6px}
+.tcc-card-cat{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tcc-red)}
+.tcc-card-title{font-size:14px;font-weight:700;line-height:1.4;color:var(--black)}
+.tcc-card-title a:hover{text-decoration:underline}
+.tcc-card-meta{font-size:11px;color:var(--gray-400);margin-top:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tcc-list{display:flex;flex-direction:column}
+.tcc-list-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-100)}
+.tcc-list-item:last-child{border:none}
+.tcc-list-num{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--tcc-red);font-weight:700;min-width:20px;padding-top:1px}
+.tcc-list-body h4{font-size:13px;font-weight:600;line-height:1.4;color:var(--black)}
+.tcc-list-body h4 a:hover{text-decoration:underline}
+.tcc-list-meta{font-size:11px;color:var(--gray-400);margin-top:3px}
+.tcc-empty{text-align:center;padding:32px 20px;color:var(--gray-400);border:1.5px dashed var(--gray-200);border-radius:4px}
+.tcc-empty p{font-size:13px;margin-top:8px}
+
 /* ─── RESPONSIVE ─── */
 @media(max-width:900px){
   .hero-grid,.grid-main,.sb-hero,.footer-links,.opinion-grid{grid-template-columns:1fr}
   .footer-top{grid-template-columns:1fr}
   .hero-thumbs{flex-direction:row;overflow-x:auto;gap:12px;padding-left:0}
-  .grid-3{grid-template-columns:repeat(2,1fr)}
+  .grid-3,.tcc-news-grid{grid-template-columns:repeat(2,1fr)}
   .sidebar-sticky{position:static}
+}
+@media(max-width:600px){
+  .tcc-news-grid{grid-template-columns:1fr}
 }
 @media(max-width:600px){
   .nav-links .nav-item:not(:first-child):not(:nth-child(2)):not(:nth-child(3)){display:none}
@@ -355,6 +385,7 @@ const IS_LOCAL_FILE = window.location.protocol === 'file:';
       <div class="nav-item active">
         <a href="#">ข่าว <span class="nav-chevron">▾</span></a>
         <div class="dropdown">
+          <a href="#section-tccnews" style="color:var(--tcc-red);font-weight:700">🔴 ข่าว TCC (TCC News)</a>
           <a href="#section-markets">ตลาด (Markets)</a>
           <a href="#section-finance">การเงิน (Finance)</a>
           <a href="#section-tech">เทคโนโลยี (Tech)</a>
@@ -453,6 +484,23 @@ const IS_LOCAL_FILE = window.location.protocol === 'file:';
     <div class="feature-card"><div class="feature-img skel"></div><div class="skel skel-text w40" style="margin-bottom:8px"></div><div class="skel skel-text w80"></div></div>
     <div class="feature-card"><div class="feature-img skel"></div><div class="skel skel-text w40" style="margin-bottom:8px"></div><div class="skel skel-text w80"></div></div>
     <div class="feature-card"><div class="feature-img skel"></div><div class="skel skel-text w40" style="margin-bottom:8px"></div><div class="skel skel-text w80"></div></div>
+  </div>
+
+  <!-- SECTION: TCC NEWS (ข่าวจาก TCC เอง — แยกจาก RSS) -->
+  <div class="tcc-news-section" id="section-tccnews">
+    <div class="tcc-news-header">
+      <span class="tcc-news-title">
+        📣 ข่าว &amp; ประกาศจาก TCC
+        <span class="tcc-news-badge">TCC OFFICIAL</span>
+      </span>
+      <a href="#section-tccnews" class="sec-more" style="color:var(--tcc-red)">ดูทั้งหมด →</a>
+    </div>
+    <div id="tccnews-grid" class="tcc-news-grid">
+      <!-- skeleton -->
+      <div class="tcc-card"><div class="tcc-card-img-placeholder"></div><div class="tcc-card-body"><div class="skel skel-text w40" style="margin-bottom:6px"></div><div class="skel skel-text w80"></div><div class="skel skel-text w60" style="margin-top:8px"></div></div></div>
+      <div class="tcc-card"><div class="tcc-card-img-placeholder"></div><div class="tcc-card-body"><div class="skel skel-text w40" style="margin-bottom:6px"></div><div class="skel skel-text w80"></div><div class="skel skel-text w60" style="margin-top:8px"></div></div></div>
+    </div>
+    <div id="tccnews-list" class="tcc-list" style="display:none"></div>
   </div>
 
   <!-- SECTION: MARKETS -->
@@ -683,6 +731,7 @@ const IS_LOCAL_FILE = window.location.protocol === 'file:';
 //  STATE
 // ──────────────────────────────────────────────
 let allNews    = [];
+let allTCCNews = [];   // ← ข่าว TCC เอง แยกออกจาก RSS
 let allPrices  = [];
 let activeFilter = 'all';
 let refreshTimer = null;
@@ -709,14 +758,15 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
   refreshAll();
-  // Auto refresh: prices ทุก 60 วินาที, news ทุก 5 นาที
-  setInterval(fetchPrices, 60000);
-  setInterval(fetchNews,  5 * 60000);
+  // Auto refresh: prices ทุก 60 วินาที, news ทุก 5 นาที, TCC news ทุก 2 นาที
+  setInterval(fetchPrices,  60000);
+  setInterval(fetchNews,    5 * 60000);
+  setInterval(fetchTCCNews, 2 * 60000);
 });
 
 async function refreshAll() {
   setStatus('loading', 'กำลังโหลดข้อมูล...');
-  await Promise.all([fetchNews(), fetchPrices(), fetchEvents()]);
+  await Promise.all([fetchNews(), fetchTCCNews(), fetchPrices(), fetchEvents()]);
 }
 
 // ──────────────────────────────────────────────
@@ -796,6 +846,13 @@ function getMockData(action) {
       { symbol:'TCC', name:'TCC Token', price_usd:TCC_TOKEN_PRICE, change_24h:4.20, updated_at: new Date().toISOString() },
     ]};
   }
+  if (action === 'tccnews') {
+    return { tccnews: [
+      { id:'tcc001', timestamp: new Date(Date.now() - 2*3600000).toISOString(), title_th:'TCC Crypto Summit Thailand 2026 — เปิดรับสมัครแล้ว!', title_en:'TCC Crypto Summit Thailand 2026 — Registration Open!', url:'#', source:'TCC', category:'markets', sentiment:'positive', asset_tags:['BTC','ETH'], image_url:'https://i.ibb.co/ycVLd1vP/XQBp-X.jpg', source_type:'tcc' },
+      { id:'tcc002', timestamp: new Date(Date.now() - 8*3600000).toISOString(), title_th:'อัปเดต: ระบบ TCC Marketplace v24 ออกแล้ว', title_en:'Update: TCC Marketplace v24 Released', url:'#', source:'TCC', category:'tech', sentiment:'positive', asset_tags:[], image_url:'', source_type:'tcc' },
+      { id:'tcc003', timestamp: new Date(Date.now() - 24*3600000).toISOString(), title_th:'ประกาศ: ปรับราคา TCC Token Q3/2026', title_en:'Announcement: TCC Token Q3/2026 Price Update', url:'#', source:'TCC', category:'finance', sentiment:'neutral', asset_tags:[], image_url:'', source_type:'tcc' },
+    ]};
+  }
   if (action === 'events') {
     return { events: [
       { date: '2026-08-20T00:00:00Z', title: 'TCC Crypto Summit Thailand 2026', location: 'กรุงเทพฯ, ไทย', url: '#' },
@@ -841,6 +898,20 @@ async function fetchNews() {
   } catch (e) {
     if (!IS_LOCAL_FILE) setStatus('error', 'โหลดข้อมูลไม่สำเร็จ — ' + e.message);
     console.error('fetchNews error:', e);
+  }
+}
+
+// ──────────────────────────────────────────────
+//  FETCH TCC NEWS (ข่าวประกาศจาก TCC เอง)
+// ──────────────────────────────────────────────
+async function fetchTCCNews() {
+  try {
+    const data = await fetchGAS('tccnews', { limit: 20 });
+    allTCCNews = data.tccnews || [];
+    renderTCCNews();
+  } catch (e) {
+    console.error('fetchTCCNews error:', e);
+    // ไม่ทำอะไร — renderTCCNews ยังแสดง empty state ได้
   }
 }
 
@@ -975,6 +1046,73 @@ function renderFeaturedGrid(news) {
       <div class="feature-meta"><span class="sentiment ${n.sentiment}" style="font-size:9px">${sentimentLabel(n.sentiment)}</span> · ${timeAgo(n.timestamp)}</div>
     </div>
   `).join('');
+}
+
+// ──────────────────────────────────────────────
+//  TCC NEWS RENDER
+// ──────────────────────────────────────────────
+function renderTCCNews() {
+  const gridEl = document.getElementById('tccnews-grid');
+  const listEl = document.getElementById('tccnews-list');
+
+  if (!allTCCNews.length) {
+    gridEl.innerHTML = `
+      <div class="tcc-empty" style="grid-column:1/-1">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        <p>ยังไม่มีข่าวประกาศจาก TCC</p>
+        <p style="font-size:11px;margin-top:4px">admin โพสต์ได้ที่ Sheet <b>TCCNews</b></p>
+      </div>`;
+    listEl.style.display = 'none';
+    return;
+  }
+
+  const cards = allTCCNews.slice(0, 2);
+  const rest  = allTCCNews.slice(2, 7);
+
+  // Card grid (top 2)
+  gridEl.innerHTML = cards.map(n => {
+    const imgHtml = n.image_url
+      ? `<img class="tcc-card-img" src="${n.image_url}" alt="${n.title_th || ''}"
+           onerror="this.parentElement.innerHTML='<div class=\\'tcc-card-img-placeholder\\'></div>'">`
+      : `<div class="tcc-card-img-placeholder">
+           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1">
+             <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9"/>
+           </svg>
+         </div>`;
+    return `
+      <div class="tcc-card">
+        ${imgHtml}
+        <div class="tcc-card-body">
+          <div class="tcc-card-cat">${CAT_MAP[n.category] || n.category || 'ประกาศ'}</div>
+          <div class="tcc-card-title">
+            <a href="${n.url || '#'}" target="_blank" rel="noopener">${n.title_th || n.title_en}</a>
+          </div>
+          <div class="tcc-card-meta">
+            <span class="sentiment ${n.sentiment}">${sentimentLabel(n.sentiment)}</span>
+            ${(n.asset_tags || []).map(t => `<span class="asset-tag">${t}</span>`).join('')}
+            <span style="margin-left:auto">${timeAgo(n.timestamp)}</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // List (items 3-7)
+  if (rest.length) {
+    listEl.style.display = '';
+    listEl.innerHTML = rest.map((n, i) => `
+      <div class="tcc-list-item">
+        <div class="tcc-list-num">${String(i + 3).padStart(2, '0')}</div>
+        <div class="tcc-list-body">
+          <h4><a href="${n.url || '#'}" target="_blank" rel="noopener">${n.title_th || n.title_en}</a></h4>
+          <div class="tcc-list-meta">
+            ${timeAgo(n.timestamp)}
+            ${(n.asset_tags || []).length ? '· ' + n.asset_tags.map(t => `<span class="asset-tag">${t}</span>`).join('') : ''}
+          </div>
+        </div>
+      </div>`).join('');
+  } else {
+    listEl.style.display = 'none';
+  }
 }
 
 // ──────────────────────────────────────────────
