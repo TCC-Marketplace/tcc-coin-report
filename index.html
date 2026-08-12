@@ -2,9 +2,9 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>TCCCoin Report v8: Bitcoin, Ethereum, XRP, ข่าว Crypto และราคา</title>
-<!-- v8: Share system — Share button ทุก card + list | Share modal (Copy/FB/X/LINE) | Deep link ?news=id | Auto-open modal -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"/>
+<title>TCCCoin Report v9: Bitcoin, Ethereum, XRP, ข่าว Crypto และราคา</title>
+<!-- v9: Mobile layout + no demo data -->
 <meta name="description" content="แหล่งข่าว Crypto ชั้นนำสำหรับนักเทรดไทย ครอบคลุมตลาด นโยบาย เทคโนโลยี และการเงิน Crypto ระดับโลก"/>
 <meta property="og:title" content="TCCCoin Report"/>
 <meta property="og:description" content="ข่าว Crypto ภาษาไทย อัปเดตทุก 30 นาที"/>
@@ -18,10 +18,10 @@
 <style>
 /* ─── RESET & BASE ─── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'IBM Plex Sans Thai','DM Sans',sans-serif;font-size:15px;color:#1a1a1a;background:#fff;line-height:1.5}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:'IBM Plex Sans Thai','DM Sans',sans-serif;font-size:15px;color:#1a1a1a;background:#fff;line-height:1.5;overflow-x:hidden;max-width:100vw}
 a{color:inherit;text-decoration:none}
-img{max-width:100%;display:block}
+img{max-width:100%;height:auto;display:block}
 button{cursor:pointer;font-family:inherit}
 
 /* ─── VARIABLES ─── */
@@ -75,8 +75,8 @@ button{cursor:pointer;font-family:inherit}
 .btn-signup:hover{opacity:.85}
 
 /* ─── TICKER BAR ─── */
-.ticker-bar{background:#111;height:var(--ticker-h);overflow:hidden;display:flex;align-items:center}
-.ticker-inner{display:flex;align-items:center;white-space:nowrap;animation:ticker 40s linear infinite}
+.ticker-bar{background:#111;height:var(--ticker-h);overflow:hidden;display:flex;align-items:center;max-width:100%;width:100%}
+.ticker-inner{display:flex;align-items:center;white-space:nowrap;animation:ticker 40s linear infinite;will-change:transform}
 .ticker-inner:hover{animation-play-state:paused}
 @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .tick-item{display:inline-flex;align-items:center;gap:8px;padding:0 24px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#fff;border-right:1px solid #333}
@@ -87,9 +87,9 @@ button{cursor:pointer;font-family:inherit}
 .tick-chg.dn{color:#f87171}
 
 /* ─── LAYOUT ─── */
-.container{max-width:1280px;margin:0 auto;padding:0 16px}
-.grid-main{display:grid;grid-template-columns:1fr 320px;gap:32px}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.container{max-width:1280px;margin:0 auto;padding:0 16px;width:100%}
+.grid-main{display:grid;grid-template-columns:1fr 320px;gap:32px;min-width:0}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;min-width:0}
 
 /* ─── SECTION HEADER ─── */
 .sec-header{display:flex;align-items:baseline;justify-content:space-between;border-bottom:2px solid var(--black);padding-bottom:8px;margin-bottom:16px}
@@ -109,20 +109,22 @@ button{cursor:pointer;font-family:inherit}
 
 /* ─── HERO ─── */
 .hero{padding:24px 0 32px}
-.hero-grid{display:grid;grid-template-columns:1fr 380px;gap:1px;background:var(--gray-200)}
-.hero-main{background:#fff;padding-right:20px}
+.hero-grid{display:grid;grid-template-columns:1fr 380px;gap:1px;background:var(--gray-200);min-width:0;width:100%}
+.hero-main{background:#fff;padding-right:20px;min-width:0;overflow:hidden}
 .hero-main .category-tag{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tcc-red);margin-bottom:10px}
-.hero-main h1{font-size:clamp(22px,2.8vw,34px);font-weight:700;line-height:1.25;margin-bottom:12px;letter-spacing:-.3px}
+.hero-main h1{font-size:clamp(22px,2.8vw,34px);font-weight:700;line-height:1.25;margin-bottom:12px;letter-spacing:-.3px;word-break:break-word}
 .hero-main h1 a:hover{text-decoration:underline}
 .hero-meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray-600);margin-bottom:14px;flex-wrap:wrap}
 .hero-img-wrap{width:100%;aspect-ratio:16/9;background:var(--gray-100);margin-bottom:16px;overflow:hidden;border-radius:2px;position:relative}
-.hero-excerpt{font-size:15px;line-height:1.65;color:var(--gray-800);margin-bottom:16px}
+.hero-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.hero-excerpt{font-size:15px;line-height:1.65;color:var(--gray-800);margin-bottom:16px;word-break:break-word}
 
 /* ─── THUMBS ─── */
-.hero-thumbs{background:#fff;padding-left:20px;display:flex;flex-direction:column;gap:1px}
+.hero-thumbs{background:#fff;padding-left:20px;display:flex;flex-direction:column;gap:1px;min-width:0}
 .thumb-item{display:grid;grid-template-columns:100px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--gray-100)}
 .thumb-item:last-child{border:none}
 .thumb-img{width:100px;height:68px;background:var(--gray-100);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--gray-400);font-size:11px;overflow:hidden}
+.thumb-img img{width:100%;height:100%;object-fit:cover;display:block}
 .thumb-cat{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tcc-red);margin-bottom:4px}
 .thumb-title{font-size:13px;font-weight:600;line-height:1.4;color:var(--black)}
 .thumb-title:hover{text-decoration:underline}
@@ -407,15 +409,22 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 @media(max-width:900px){
   .hero-grid,.grid-main,.sb-hero,.footer-links,.opinion-grid{grid-template-columns:1fr}
   .footer-top{grid-template-columns:1fr}
-  .hero-thumbs{flex-direction:row;overflow-x:auto;gap:12px;padding-left:0}
+  /* Thumbs: horizontal scroll on tablet only */
+  .hero-thumbs{flex-direction:row;overflow-x:auto;gap:12px;padding-left:0;-webkit-overflow-scrolling:touch}
   .grid-3,.tcc-news-grid{grid-template-columns:repeat(2,1fr)}
   .sidebar-sticky{position:static}
-  /* Footer links: 2 columns on tablet */
-  .footer-links{grid-template-columns:repeat(3,1fr)!important}
+  .footer-links{grid-template-columns:repeat(3,1fr)}
 }
 
 /* ─── MOBILE (≤600px) ─── */
 @media(max-width:600px){
+  /* PREVENT HORIZONTAL SCROLL */
+  .container,.page-wrap,.hero,.hero-grid,.hero-main,.hero-thumbs,
+  .grid-main,.grid-3,.tcc-news-grid,.sb-hero,.section-block,
+  .filter-tabs,.opinion-grid,.newsletter,.footer-links{
+    max-width:100%;min-width:0;
+  }
+
   /* NAVBAR */
   .nav-links{display:none}
   .nav-right{display:none}
@@ -424,28 +433,33 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
   .logo{margin-right:auto}
 
   /* ALERT BAR */
-  .alert-bar{font-size:11px;padding:5px 10px}
+  .alert-bar{font-size:11px;padding:5px 10px;overflow:hidden}
+  #alert-text{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}
 
-  /* TICKER */
-  .tick-item{padding:0 14px;font-size:11px}
+  /* TICKER — contained, no overflow */
+  .ticker-bar{width:100%;overflow:hidden}
+  .tick-item{padding:0 12px;font-size:11px}
 
   /* STATUS BAR */
   .status-bar{font-size:10px;padding:6px 10px}
 
-  /* HERO */
+  /* HERO — single column, aspect-ratio image (no fixed height) */
   .hero{padding:16px 0 20px}
-  .hero-grid{gap:16px}
+  .hero-grid{grid-template-columns:1fr;gap:0;background:transparent}
+  .hero-main{padding-right:0;padding-bottom:0}
   .hero-main h1{font-size:clamp(18px,5vw,24px)}
   .hero-excerpt{font-size:14px}
-  .hero-img-wrap{height:200px!important}
-  /* Thumbs on mobile: vertical stack */
-  .hero-thumbs{flex-direction:column!important;overflow-x:unset;gap:0}
+  /* aspect-ratio keeps correct proportions — no fixed height override */
+  .hero-img-wrap{aspect-ratio:16/9;height:auto}
+  /* Thumbs on mobile: vertical list, no horizontal scroll */
+  .hero-thumbs{flex-direction:column;overflow-x:unset;overflow:visible;gap:0;padding-left:0;background:#fff;border-top:1px solid var(--gray-100)}
   .thumb-item{grid-template-columns:80px 1fr;gap:10px}
   .thumb-img{width:80px;height:54px}
 
-  /* FILTER TABS */
-  .filter-tabs{gap:0;padding-bottom:0;margin-bottom:14px}
-  .filter-tab{padding:8px 10px;font-size:12px}
+  /* FILTER TABS — scrollable but doesn't push page */
+  .filter-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;gap:0;padding-bottom:0;margin-bottom:14px;scrollbar-width:none}
+  .filter-tabs::-webkit-scrollbar{display:none}
+  .filter-tab{padding:8px 10px;font-size:12px;flex-shrink:0}
 
   /* GRIDS */
   .grid-3{grid-template-columns:1fr}
@@ -644,8 +658,8 @@ const IS_LOCAL_FILE = window.location.protocol === 'file:';
         <div class="category-tag" id="hero-cat">กำลังโหลด...</div>
         <h1 id="hero-title"><a href="#" id="hero-link"><span class="skel skel-text w80" style="height:28px;display:block;margin-bottom:8px"></span><span class="skel skel-text w60" style="height:28px;display:block"></span></a></h1>
         <div class="hero-meta" id="hero-meta"></div>
-        <div class="hero-img-wrap skel" id="hero-img" style="height:280px"></div>
-        <p class="hero-excerpt skel" id="hero-excerpt" style="height:80px;border-radius:3px"></p>
+        <div class="hero-img-wrap skel" id="hero-img"></div>
+        <p class="hero-excerpt skel" id="hero-excerpt" style="height:60px;border-radius:3px"></p>
         <div style="display:flex;gap:8px;flex-wrap:wrap" id="hero-tags"></div>
       </div>
       <!-- HERO THUMBS -->
@@ -1181,16 +1195,15 @@ function renderHero(news) {
 
   // ── รูปภาพ hero ──
   const imgWrap = document.getElementById('hero-img');
+  imgWrap.style.height = '';  // ล้าง inline height — ให้ CSS aspect-ratio จัดการ
   if (n.image_url) {
-    imgWrap.className  = 'hero-img-wrap';
-    imgWrap.style.height = '280px';
-    imgWrap.innerHTML  = `<img src="${n.image_url}" alt="${n.title_en || ''}"
-      style="width:100%;height:100%;object-fit:cover"
-      onerror="this.parentElement.style.background='var(--gray-100)';this.remove()">`;
+    imgWrap.className = 'hero-img-wrap';
+    imgWrap.innerHTML = `<img src="${n.image_url}" alt="${n.title_en || ''}"
+      style="width:100%;height:100%;object-fit:cover;display:block"
+      onerror="this.parentElement.classList.add('skel');this.remove()">`;
   } else {
-    imgWrap.className  = 'hero-img-wrap skel';
-    imgWrap.style.height = '280px';
-    imgWrap.innerHTML  = '';
+    imgWrap.className = 'hero-img-wrap skel';
+    imgWrap.innerHTML = '';
   }
 
   document.getElementById('hero-excerpt').className = 'hero-excerpt';
