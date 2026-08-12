@@ -9,10 +9,13 @@
      v12 (fix): Video ใช้ click-to-play (thumbnail + ปุ่ม Play → inject iframe ตอนกดเท่านั้น)
      แก้ YouTube Error 153 โดยเปลี่ยน iframe referrerpolicy เป็น strict-origin-when-cross-origin
      (ของเดิม no-referrer ทำให้ YouTube ตรวจสอบ origin ที่อนุญาต embed ไม่ได้)
-     แก้ mock data ที่มี TikTok/Facebook video ID ปลอม → ใช้รูป placeholder + ลิงก์แทน -->
-<meta name="description" content="แหล่งข่าว Crypto ชั้นนำสำหรับนักเทรดไทย ครอบคลุมตลาด นโยบาย เทคโนโลยี และการเงิน Crypto ระดับโลก"/>
+     แก้ mock data ที่มี TikTok/Facebook video ID ปลอม → ใช้รูป placeholder + ลิงก์แทน
+     v13 (fix): TikTok เปลี่ยนจาก iframe /embed/v2/ID ตรงๆ → official oEmbed
+     (blockquote + tiktok.com/embed.js) แก้ปัญหาเล่นไม่ได้บนมือถือ (iOS Safari บล็อก
+     third-party storage) พร้อม fallback link "ดูใน TikTok" ในตัวถ้า script โหลดไม่สำเร็จ -->
+<meta name="description" content="แหล่งข่าว Crypto ชั้นนำสำหรับนักเทรดทั่วโลก ครอบคลุมตลาด นโยบาย เทคโนโลยี และการเงิน Crypto ระดับโลก"/>
 <meta property="og:title" content="TCC Financial Reports"/>
-<meta property="og:description" content="ข่าว Crypto ภาษาไทย อัปเดตทุก 30 นาที"/>
+<meta property="og:description" content="ข่าว Crypto อัปเดตทุก 30 นาที"/>
 <meta property="og:type" content="website"/>
 <meta name="referrer" content="no-referrer"/>
 <link rel="icon" type="image/png" href="https://i.ibb.co/7xc9KFL5/TCC-Small-1-Logo.png"/>
@@ -462,6 +465,10 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 /* square 1:1 */
 .vid-wrap[data-orient="square"]{aspect-ratio:1/1}
 .vid-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;display:block}
+/* TikTok oEmbed blockquote — ก่อน embed.js ประมวลผล (หรือถ้าโหลด script ไม่สำเร็จ) */
+.tiktok-embed{border:none;background:#000;display:flex;align-items:center;justify-content:center;min-height:100%}
+.tt-fallback-link{color:#fff;font-size:13px;font-weight:600;text-decoration:none;padding:10px 18px;border:1.5px solid #444;border-radius:20px}
+.tt-fallback-link:hover{border-color:#fff}
 /* click-to-play cover (ก่อนกด Play — ยังไม่โหลด iframe) */
 .vid-wrap.vid-cover{cursor:pointer}
 .vid-thumb{position:absolute;inset:0;width:100%;height:100%;background:linear-gradient(135deg,#1a1a1a 0%,#2a2a2a 100%);background-size:cover;background-position:center}
@@ -2020,18 +2027,28 @@ function parseVideoUrl(url) {
   }
 
   // ── TikTok — /video/ID หรือ vm.tiktok.com/CODE ──
-  m = u.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/);
+  // หมายเหตุ: iframe แบบ /embed/v2/ID ตรงๆ มีปัญหาบนมือถือ (โดยเฉพาะ iOS Safari
+  // ที่บล็อก third-party storage ทำให้ player โหลดไม่ขึ้น) ดังนั้นถ้าได้ video ID
+  // ตัวเลขจริง (จาก URL แบบ @user/video/ID) จะใช้วิธี official oEmbed ของ TikTok
+  // (blockquote + embed.js) แทน ซึ่งรองรับมือถือได้ดีกว่าและมีลิงก์สำรองในตัว
+  m = u.match(/tiktok\.com\/@([^/]+)\/video\/(\d+)/);
   if (m) {
-    return { embed: `https://www.tiktok.com/embed/v2/${m[1]}`, platform: 'tt', orient: 'portrait', label: 'TikTok' };
+    const cleanUrl = `https://www.tiktok.com/@${m[1]}/video/${m[2]}`;
+    return {
+      embed: `https://www.tiktok.com/embed/v2/${m[2]}`, platform: 'tt', orient: 'portrait', label: 'TikTok',
+      ttId: m[2], ttUser: m[1], originalUrl: cleanUrl,
+    };
   }
   m = u.match(/vm\.tiktok\.com\/([A-Za-z0-9]+)/);
   if (m) {
-    // vm.tiktok.com links ต้อง resolve redirect → ใช้ embed กับ code
-    return { embed: `https://www.tiktok.com/embed/v2/${m[1]}`, platform: 'tt', orient: 'portrait', label: 'TikTok' };
+    // vm.tiktok.com เป็น short link (ไม่ใช่ video ID จริง) — resolve ไม่ได้จากฝั่ง client
+    // จึงยังต้องใช้ iframe ตรงแบบเดิม (ttId ไม่ใช่ตัวเลข → ข้าม oEmbed method)
+    return { embed: `https://www.tiktok.com/embed/v2/${m[1]}`, platform: 'tt', orient: 'portrait', label: 'TikTok', originalUrl: u };
   }
   // ── TikTok embed URL โดยตรง ──
   if (/tiktok\.com\/embed/i.test(u)) {
-    return { embed: u, platform: 'tt', orient: 'portrait', label: 'TikTok' };
+    const idm = u.match(/embed\/(?:v2\/)?(\d+)/);
+    return { embed: u, platform: 'tt', orient: 'portrait', label: 'TikTok', ttId: idm ? idm[1] : undefined, originalUrl: u };
   }
 
   // ── Vimeo ──
@@ -2130,6 +2147,24 @@ function playTccVideo(newsId, wrapEl) {
   const badgeCls = v.platform || 'oth';
   wrapEl.classList.remove('vid-cover');
   wrapEl.onclick = null;
+
+  // TikTok: ใช้ official oEmbed (blockquote + tiktok.com/embed.js) แทน iframe
+  // แบบ /embed/v2/ID ตรงๆ — วิธีนี้คือวิธีทางการที่ TikTok แนะนำ และมี fallback link
+  // ในตัว (ถ้า embed.js โหลดไม่สำเร็จบนมือถือ/in-app browser ผู้ใช้ยังเห็นลิงก์กดได้
+  // แทนกล่องว่างเปล่า) — ใช้เฉพาะกรณีมี ttId เป็นตัวเลขจริง (จาก URL @user/video/ID)
+  if (v.platform === 'tt' && v.ttId && /^\d+$/.test(v.ttId)) {
+    wrapEl.innerHTML = `
+      <blockquote class="tiktok-embed" cite="${v.originalUrl}" data-video-id="${v.ttId}"
+        style="max-width:100%;min-width:100%;height:100%;margin:0">
+        <section>
+          <a class="tt-fallback-link" target="_blank" rel="noopener" href="${v.originalUrl}">▶ ดูวิดีโอนี้ใน TikTok</a>
+        </section>
+      </blockquote>
+      <span class="vid-platform ${badgeCls}">${v.label}</span>`;
+    loadTikTokEmbedScript();
+    return;
+  }
+
   wrapEl.innerHTML = `
     <iframe
       src="${v.embed}"
@@ -2138,6 +2173,23 @@ function playTccVideo(newsId, wrapEl) {
       title="${v.label}"
       referrerpolicy="strict-origin-when-cross-origin"></iframe>
     <span class="vid-platform ${badgeCls}">${v.label}</span>`;
+}
+
+/**
+ * loadTikTokEmbedScript()
+ * โหลด (หรือโหลดซ้ำ) tiktok.com/embed.js — สคริปต์ของ TikTok จะสแกนหา
+ * <blockquote class="tiktok-embed"> ที่ยังไม่ถูก render ทุกครั้งที่มันรัน ดังนั้น
+ * เวลามี blockquote ใหม่ถูกแทรกเข้า DOM (SPA/dynamic render) ต้องลบ script เก่า
+ * แล้วแทรกใหม่เพื่อบังคับให้สแกนซ้ำ (เทคนิคมาตรฐานสำหรับ embed TikTok แบบ dynamic)
+ */
+function loadTikTokEmbedScript() {
+  const old = document.getElementById('tiktok-embed-js');
+  if (old) old.remove();
+  const s = document.createElement('script');
+  s.id = 'tiktok-embed-js';
+  s.async = true;
+  s.src = 'https://www.tiktok.com/embed.js';
+  document.body.appendChild(s);
 }
 
 /**
