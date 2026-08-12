@@ -461,6 +461,9 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
   /* ── STATUS BAR ── */
   .status-bar{font-size:10px;padding:6px 10px;width:100%;box-sizing:border-box}
 
+  /* ── GLOBAL IMG — ไม่ล้นจอมือถือทุกกรณี ── */
+  img{max-width:100%;height:auto;display:block}
+
   /* ── HERO — single column ── */
   .hero{padding:16px 0 20px}
   .hero-grid{grid-template-columns:1fr;gap:0;background:transparent}
@@ -473,7 +476,8 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
   }
   .hero-main h1 a{display:block;width:100%}
   .hero-excerpt{font-size:14px;word-break:break-word;overflow-wrap:anywhere}
-  .hero-img-wrap{aspect-ratio:16/9;height:auto;width:100%}
+  .hero-img-wrap{aspect-ratio:16/9;height:auto;width:100%;max-width:100%;overflow:hidden}
+  .hero-img-wrap img{width:100%;height:100%;object-fit:cover}
 
   /* ── THUMBS — vertical list ── */
   .hero-thumbs{flex-direction:column;overflow-x:unset;overflow:visible;gap:0;padding-left:0;background:#fff;border-top:1px solid var(--gray-100)}
@@ -493,7 +497,8 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
   .sb-hero{grid-template-columns:1fr}
 
   /* ── FEATURED CARD — title ไม่ล้น ── */
-  .feature-img{height:180px;width:100%}
+  .feature-img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+  .tcc-card-img-wrap,.tcc-card-img{width:100%;max-width:100%}
   .feature-title{word-break:break-word;overflow-wrap:anywhere;font-size:14px}
 
   /* ── LATEST FEED ── */
@@ -580,7 +585,7 @@ const IS_LOCAL_FILE = window.location.protocol === 'file:';
       <div class="logo-mark" style="display:none">
         <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M6 5h3.5a1.5 1.5 0 010 3H6m0 0h3.5a1.5 1.5 0 010 3H6V5z" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg>
       </div>
-      <div class="logo-text"><b>TCC</b> Financial <br><span style="font-size:10px;color:#888;font-weight:400">Reports</span></div>
+      <div class="logo-text"><b>TCC</b> Financial</div>
     </a>
     <div class="nav-links">
       <div class="nav-item active">
@@ -624,7 +629,7 @@ const IS_LOCAL_FILE = window.location.protocol === 'file:';
     <div class="mobile-drawer-header">
       <a class="logo" href="#" onclick="closeDrawer()">
         <img class="logo-img" src="https://i.ibb.co/7xc9KFL5/TCC-Small-1-Logo.png" alt="TCC" onerror="this.style.display='none'"/>
-        <div class="logo-text"><b>TCC</b>Coin<br><span style="font-size:10px;color:#888;font-weight:400">Report</span></div>
+        <div class="logo-text"><b>TCC</b> Financial</div>
       </a>
       <button class="mobile-drawer-close" onclick="closeDrawer()">✕</button>
     </div>
@@ -659,8 +664,29 @@ const IS_LOCAL_FILE = window.location.protocol === 'file:';
 <!-- TICKER BAR -->
 <div class="ticker-bar">
   <div class="ticker-inner" id="ticker-inner">
-    <!-- populated by JS -->
-    <div class="tick-item"><span class="tick-name">BTC</span><span class="tick-price">—</span></div>
+    <!-- static placeholder — replaced by JS when prices load -->
+    <div class="tick-item"><span class="tick-name">BTC</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">ETH</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">BNB</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">SOL</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">XRP</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">ADA</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">DOGE</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">AVAX</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">DOT</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">LINK</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">TCC</span><span class="tick-price">$4.20</span><span class="tick-chg up">▲ 0.00%</span></div>
+    <div class="tick-item"><span class="tick-name">BTC</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">ETH</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">BNB</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">SOL</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">XRP</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">ADA</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">DOGE</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">AVAX</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">DOT</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">LINK</span><span class="tick-price">—</span><span class="tick-chg">—</span></div>
+    <div class="tick-item"><span class="tick-name">TCC</span><span class="tick-price">$4.20</span><span class="tick-chg up">▲ 0.00%</span></div>
   </div>
 </div>
 
@@ -1564,19 +1590,27 @@ function switchPriceTab(tab, btn) {
 //  TICKER
 // ──────────────────────────────────────────────
 function renderTicker() {
-  if (!allPrices.length) return;
   const inner = document.getElementById('ticker-inner');
 
-  const html = allPrices.map(p => {
-    const up = p.change_24h >= 0;
-    return `<div class="tick-item">
-      <span class="tick-name">${p.symbol}</span>
-      <span class="tick-price">${fmtPrice(p.price_usd, p.symbol)}</span>
-      <span class="tick-chg ${up ? 'up' : 'dn'}">${up ? '▲' : '▼'} ${Math.abs(p.change_24h).toFixed(2)}%</span>
-    </div>`;
+  const CORE_SYMBOLS = ['BTC','ETH','BNB','SOL','XRP','ADA','DOGE','AVAX','DOT','LINK'];
+  const tccItem = { symbol:'TCC', name:'TCC Token', price_usd: TCC_TOKEN_PRICE, change_24h: 0 };
+  const gasMap  = Object.fromEntries(allPrices.map(p => [p.symbol, p]));
+
+  const displayList = CORE_SYMBOLS.map(sym =>
+    gasMap[sym] || { symbol: sym, name: sym, price_usd: null, change_24h: 0 }
+  );
+  allPrices.forEach(p => { if (!CORE_SYMBOLS.includes(p.symbol)) displayList.push(p); });
+  displayList.push(tccItem);
+
+  const html = displayList.map(p => {
+    const up  = p.change_24h >= 0;
+    const px  = p.price_usd != null ? fmtPrice(p.price_usd, p.symbol) : '—';
+    const chg = p.price_usd != null
+      ? `<span class="tick-chg ${up ? 'up' : 'dn'}">${up ? '▲' : '▼'} ${Math.abs(p.change_24h).toFixed(2)}%</span>`
+      : `<span class="tick-chg" style="color:#444">—</span>`;
+    return `<div class="tick-item"><span class="tick-name">${p.symbol}</span><span class="tick-price">${px}</span>${chg}</div>`;
   }).join('');
 
-  // duplicate for seamless loop
   inner.innerHTML = html + html;
 }
 
