@@ -611,44 +611,47 @@ function setStatus(state, text) {
 // ──────────────────────────────────────────────
 function fetchGAS(action, params = {}) {
   return new Promise((resolve, reject) => {
-    // ── DEMO MODE: ไม่มี URL หรือเปิดจาก file:// ──
+    // ── DEMO MODE ──
     if (!GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE' || IS_LOCAL_FILE) {
-      if (IS_LOCAL_FILE) {
-        console.info(`[TCCReport] file:// detected → Demo mode (${action})`);
-      }
-      // จำลองหน่วงเล็กน้อยเพื่อให้ดู skeleton loader
+      if (IS_LOCAL_FILE) console.info(`[TCCReport] file:// → Demo (${action})`);
       setTimeout(() => resolve(getMockData(action)), 600);
       return;
     }
 
-    // ── JSONP (สำหรับ GAS CORS) ──
+    // ── JSONP (GAS redirect ช้า — ต้อง timeout นานพอ) ──
     const cbName = '_cb_' + action + '_' + Date.now();
     const qs = new URLSearchParams({ action, callback: cbName, ...params }).toString();
     const script = document.createElement('script');
+    let settled  = false;
 
     const timeout = setTimeout(() => {
-      cleanup();
-      // Timeout → fallback mock
-      console.warn(`[TCCReport] ${action} timeout → fallback mock`);
-      resolve(getMockData(action));
-    }, 12_000);
-
-    function cleanup() {
-      clearTimeout(timeout);
-      delete window[cbName];
+      if (settled) return;
+      settled = true;
+      // อย่าลบ window[cbName] ทันที — GAS อาจยังส่งกลับมาหลัง timeout
+      // ให้ window[cbName] เป็น noop แทน เพื่อกัน "is not defined" error
+      window[cbName] = () => {};
       script.remove();
-    }
+      console.warn(`[TCCReport] ${action} timeout (25s) → fallback mock`);
+      resolve(getMockData(action));
+    }, 25_000); // 25 วินาที — GAS redirect อาจใช้ 10-20s
 
     window[cbName] = (data) => {
-      cleanup();
+      if (settled) return; // ถ้า timeout แล้ว ไม่ทำอะไร
+      settled = true;
+      clearTimeout(timeout);
+      // delay cleanup เล็กน้อย ให้ script execute เสร็จก่อน
+      setTimeout(() => { delete window[cbName]; script.remove(); }, 100);
       resolve(data);
     };
 
     script.src = `${GAS_URL}?${qs}`;
     script.onerror = () => {
-      cleanup();
-      // Network error → fallback mock แทน reject
-      console.warn(`[TCCReport] ${action} network error → fallback mock`);
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeout);
+      window[cbName] = () => {};
+      script.remove();
+      console.warn(`[TCCReport] ${action} script error → fallback mock`);
       resolve(getMockData(action));
     };
 
@@ -677,21 +680,27 @@ function getMockData(action) {
       { date: '2026-09-18T00:00:00Z', title: 'ETHGlobal Bangkok Hackathon',     location: 'กรุงเทพฯ, ไทย', url: '#' },
     ]};
   }
-  // news mock
+  // news mock — ใช้ Unsplash สำหรับ demo
+  const IMG = {
+    markets: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80',
+    tech:    'https://images.unsplash.com/photo-1639762681057-408e52192e55?w=800&q=80',
+    policy:  'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80',
+    finance: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=800&q=80',
+  };
   const now = new Date();
   const mockNews = [
-    { id:'m1', timestamp: new Date(now - 36*60000).toISOString(),   title_th:'สินทรัพย์มูลค่า $2 ล้านล้าน กำลังได้รับ Blockchain Rail ใหม่บน ADI Chain', title_en:'$2T Assets Getting New Blockchain Rail on ADI Chain', url:'#', source:'CoinDesk', category:'markets', sentiment:'positive', asset_tags:['DEFI'] },
-    { id:'m2', timestamp: new Date(now - 60*60000).toISOString(),   title_th:'BTCPay เสนอเงินรางวัล $190,000 หลังเซิร์ฟเวอร์ถูกแฮกดูดเงิน Lightning', title_en:'BTCPay Offers $190K Bounty After Lightning Hack', url:'#', source:'Cointelegraph', category:'tech', sentiment:'negative', asset_tags:['BTC','LAYER2'] },
-    { id:'m3', timestamp: new Date(now - 2*3600000).toISOString(),  title_th:'Bitcoin Fork BIP-110 ล้าหลัง BTC ถึง 300 บล็อค', title_en:'Bitcoin Fork BIP-110 Falls 300 Blocks Behind BTC', url:'#', source:'The Block', category:'tech', sentiment:'negative', asset_tags:['BTC'] },
-    { id:'m4', timestamp: new Date(now - 3*3600000).toISOString(),  title_th:'XRP และ Ether นำทีมร่วง นักเทรดจับตา Bitcoin แนวต้าน $70,000', title_en:'XRP, ETH Lead Decline as Traders Eye BTC $70K', url:'#', source:'CoinDesk', category:'markets', sentiment:'negative', asset_tags:['XRP','ETH','BTC'] },
-    { id:'m5', timestamp: new Date(now - 3*3600000).toISOString(),  title_th:'SEC สหรัฐฯ นัดประชุมเสนอกฎ "Reg Crypto"', title_en:'SEC Schedules Vote on "Reg Crypto" Rule', url:'#', source:'CoinDesk', category:'policy', sentiment:'positive', asset_tags:[] },
-    { id:'m6', timestamp: new Date(now - 4*3600000).toISOString(),  title_th:'Bitcoin "Strong Hands" กลับมา — กระเป๋าถือ 10K+ BTC สูง 6 เดือน', title_en:'Bitcoin Strong Hands Return — 10K+ BTC Wallets Hit 6-Month High', url:'#', source:'Decrypt', category:'markets', sentiment:'positive', asset_tags:['BTC'] },
-    { id:'m7', timestamp: new Date(now - 10*3600000).toISOString(), title_th:'Trump Media Bitcoin ลดลง ขาดทุน Crypto รวม $361 ล้าน', title_en:'Trump Media Bitcoin Holdings Shrink, Crypto Loss Hits $361M', url:'#', source:'The Block', category:'finance', sentiment:'negative', asset_tags:['BTC'] },
-    { id:'m8', timestamp: new Date(now - 11*3600000).toISOString(), title_th:'Bitwise: Circle ถูก Underprice ขณะ Stablecoin มุ่งสู่ Trillion', title_en:'Bitwise: Circle Undervalued as Stablecoins Head to Trillion', url:'#', source:'Cointelegraph', category:'finance', sentiment:'positive', asset_tags:['STABLECOIN'] },
-    { id:'m9', timestamp: new Date(now - 16*3600000).toISOString(), title_th:'Grayscale เงียบ ยกเลิกแผน ETF Cardano, Polkadot และ Hedera', title_en:'Grayscale Quietly Cancels ETF Plans for Cardano, Polkadot, Hedera', url:'#', source:'The Block', category:'finance', sentiment:'negative', asset_tags:['ADA'] },
-    { id:'m10',timestamp: new Date(now - 20*3600000).toISOString(), title_th:'UK FCA เตรียมออกกฎคุม Tokenized Gold', title_en:'UK FCA Prepares Rules for Tokenized Gold', url:'#', source:'CoinDesk', category:'policy', sentiment:'positive', asset_tags:[] },
-    { id:'m11',timestamp: new Date(now - 22*3600000).toISOString(), title_th:'Hedge Funds พลิกจาก Short เป็น Long Bitcoin บน CME ครั้งแรกในรอบปี', title_en:'Hedge Funds Flip Long Bitcoin on CME for First Time This Year', url:'#', source:'Cointelegraph', category:'markets', sentiment:'positive', asset_tags:['BTC'] },
-    { id:'m12',timestamp: new Date(now - 48*3600000).toISOString(), title_th:'ส่วนหนึ่งของ FTX รอดมาได้ และมันคือเหตุผลที่ต้องมี CLARITY Act', title_en:'Part of FTX Survived, and That\'s Why We Need the CLARITY Act', url:'#', source:'CoinDesk', category:'policy', sentiment:'positive', asset_tags:[] },
+    { id:'m1',  timestamp: new Date(now - 36*60000).toISOString(),    title_th:'สินทรัพย์มูลค่า $2 ล้านล้าน กำลังได้รับ Blockchain Rail ใหม่บน ADI Chain', title_en:'$2T Assets Getting New Blockchain Rail on ADI Chain',                       url:'#', source:'CoinDesk',     category:'markets', sentiment:'positive', asset_tags:['DEFI'],           image_url: IMG.markets },
+    { id:'m2',  timestamp: new Date(now - 60*60000).toISOString(),    title_th:'BTCPay เสนอเงินรางวัล $190,000 หลังเซิร์ฟเวอร์ถูกแฮกดูดเงิน Lightning',    title_en:'BTCPay Offers $190K Bounty After Lightning Hack',                       url:'#', source:'Cointelegraph', category:'tech',    sentiment:'negative', asset_tags:['BTC','LAYER2'],   image_url: IMG.tech    },
+    { id:'m3',  timestamp: new Date(now - 2*3600000).toISOString(),   title_th:'Bitcoin Fork BIP-110 ล้าหลัง BTC ถึง 300 บล็อค',                              title_en:'Bitcoin Fork BIP-110 Falls 300 Blocks Behind BTC',                     url:'#', source:'The Block',   category:'tech',    sentiment:'negative', asset_tags:['BTC'],            image_url: IMG.tech    },
+    { id:'m4',  timestamp: new Date(now - 3*3600000).toISOString(),   title_th:'XRP และ Ether นำทีมร่วง นักเทรดจับตา Bitcoin แนวต้าน $70,000',               title_en:'XRP, ETH Lead Decline as Traders Eye BTC $70K',                        url:'#', source:'CoinDesk',     category:'markets', sentiment:'negative', asset_tags:['XRP','ETH','BTC'],image_url: IMG.markets },
+    { id:'m5',  timestamp: new Date(now - 3*3600000).toISOString(),   title_th:'SEC สหรัฐฯ นัดประชุมเสนอกฎ "Reg Crypto"',                                    title_en:'SEC Schedules Vote on "Reg Crypto" Rule',                              url:'#', source:'CoinDesk',     category:'policy',  sentiment:'positive', asset_tags:[],                 image_url: IMG.policy  },
+    { id:'m6',  timestamp: new Date(now - 4*3600000).toISOString(),   title_th:'Bitcoin "Strong Hands" กลับมา — กระเป๋าถือ 10K+ BTC สูง 6 เดือน',           title_en:'Bitcoin Strong Hands Return — 10K+ BTC Wallets Hit 6-Month High',      url:'#', source:'Decrypt',      category:'markets', sentiment:'positive', asset_tags:['BTC'],            image_url: IMG.markets },
+    { id:'m7',  timestamp: new Date(now - 10*3600000).toISOString(),  title_th:'Trump Media Bitcoin ลดลง ขาดทุน Crypto รวม $361 ล้าน',                       title_en:'Trump Media Bitcoin Holdings Shrink, Crypto Loss Hits $361M',          url:'#', source:'The Block',   category:'finance', sentiment:'negative', asset_tags:['BTC'],            image_url: IMG.finance },
+    { id:'m8',  timestamp: new Date(now - 11*3600000).toISOString(),  title_th:'Bitwise: Circle ถูก Underprice ขณะ Stablecoin มุ่งสู่ Trillion',             title_en:'Bitwise: Circle Undervalued as Stablecoins Head to Trillion',          url:'#', source:'Cointelegraph', category:'finance', sentiment:'positive', asset_tags:['STABLECOIN'],     image_url: IMG.finance },
+    { id:'m9',  timestamp: new Date(now - 16*3600000).toISOString(),  title_th:'Grayscale เงียบ ยกเลิกแผน ETF Cardano, Polkadot และ Hedera',                 title_en:'Grayscale Quietly Cancels ETF Plans for Cardano, Polkadot, Hedera',   url:'#', source:'The Block',   category:'finance', sentiment:'negative', asset_tags:['ADA'],            image_url: IMG.finance },
+    { id:'m10', timestamp: new Date(now - 20*3600000).toISOString(),  title_th:'UK FCA เตรียมออกกฎคุม Tokenized Gold',                                       title_en:'UK FCA Prepares Rules for Tokenized Gold',                             url:'#', source:'CoinDesk',     category:'policy',  sentiment:'positive', asset_tags:[],                 image_url: IMG.policy  },
+    { id:'m11', timestamp: new Date(now - 22*3600000).toISOString(),  title_th:'Hedge Funds พลิกจาก Short เป็น Long Bitcoin บน CME ครั้งแรกในรอบปี',        title_en:'Hedge Funds Flip Long Bitcoin on CME for First Time This Year',        url:'#', source:'Cointelegraph', category:'markets', sentiment:'positive', asset_tags:['BTC'],            image_url: IMG.markets },
+    { id:'m12', timestamp: new Date(now - 48*3600000).toISOString(),  title_th:'ส่วนหนึ่งของ FTX รอดมาได้ และมันคือเหตุผลที่ต้องมี CLARITY Act',           title_en:"Part of FTX Survived, and That's Why We Need the CLARITY Act",        url:'#', source:'CoinDesk',     category:'policy',  sentiment:'positive', asset_tags:[],                 image_url: IMG.policy  },
   ];
   return { news: mockNews };
 }
@@ -775,9 +784,19 @@ function renderHero(news) {
     <span class="sentiment ${n.sentiment}">${sentimentLabel(n.sentiment)}</span>
   `;
 
+  // ── รูปภาพ hero ──
   const imgWrap = document.getElementById('hero-img');
-  imgWrap.className = 'hero-img-wrap skel';
-  imgWrap.style.height = '280px';
+  if (n.image_url) {
+    imgWrap.className  = 'hero-img-wrap';
+    imgWrap.style.height = '280px';
+    imgWrap.innerHTML  = `<img src="${n.image_url}" alt="${n.title_en || ''}"
+      style="width:100%;height:100%;object-fit:cover"
+      onerror="this.parentElement.style.background='var(--gray-100)';this.remove()">`;
+  } else {
+    imgWrap.className  = 'hero-img-wrap skel';
+    imgWrap.style.height = '280px';
+    imgWrap.innerHTML  = '';
+  }
 
   document.getElementById('hero-excerpt').className = 'hero-excerpt';
   document.getElementById('hero-excerpt').textContent = n.title_en || '';
@@ -797,7 +816,12 @@ function renderThumbStrip(news) {
 
   strip.innerHTML = items.map(n => `
     <div class="thumb-item">
-      <div class="thumb-img skel" style="font-size:0"></div>
+      <div class="thumb-img" style="overflow:hidden;flex-shrink:0">
+        ${n.image_url
+          ? `<img src="${n.image_url}" alt="" style="width:100%;height:100%;object-fit:cover"
+               onerror="this.parentElement.classList.add('skel');this.remove()">`
+          : `<div class="skel" style="width:100%;height:100%"></div>`}
+      </div>
       <div>
         <div class="thumb-cat">${CAT_MAP[n.category] || n.category}</div>
         <a class="thumb-title" href="${n.url}" target="_blank" rel="noopener">${n.title_th || n.title_en}</a>
@@ -817,7 +841,12 @@ function renderFeaturedGrid(news) {
 
   grid.innerHTML = items.map(n => `
     <div class="feature-card">
-      <div class="feature-img skel" style="height:160px;border-radius:2px"></div>
+      <div style="width:100%;height:160px;border-radius:2px;overflow:hidden;background:var(--gray-100);margin-bottom:10px">
+        ${n.image_url
+          ? `<img src="${n.image_url}" alt="" style="width:100%;height:100%;object-fit:cover"
+               onerror="this.parentElement.classList.add('skel');this.remove()">`
+          : `<div class="skel" style="width:100%;height:100%"></div>`}
+      </div>
       <div class="feature-cat">${CAT_MAP[n.category] || n.category}</div>
       <div class="feature-title"><a href="${n.url}" target="_blank" rel="noopener">${n.title_th || n.title_en}</a></div>
       <div class="feature-meta"><span class="sentiment ${n.sentiment}" style="font-size:9px">${sentimentLabel(n.sentiment)}</span> · ${timeAgo(n.timestamp)}</div>
@@ -840,7 +869,12 @@ function renderSectionBlock(elId, news) {
 
   el.innerHTML = `
     <div class="sb-hero">
-      <div class="sb-hero-img skel" style="min-height:160px;border-radius:2px"></div>
+      <div class="sb-hero-img" style="min-height:160px;border-radius:2px;overflow:hidden;background:var(--gray-100)">
+        ${hero.image_url
+          ? `<img src="${hero.image_url}" alt="" style="width:100%;height:100%;object-fit:cover;min-height:160px"
+               onerror="this.parentElement.classList.add('skel');this.remove()">`
+          : `<div class="skel" style="width:100%;height:100%;min-height:160px"></div>`}
+      </div>
       <div class="sb-hero-body">
         <div class="sb-hero-cat">${CAT_MAP[hero.category] || hero.category}</div>
         <h3><a href="${hero.url}" target="_blank" rel="noopener">${hero.title_th || hero.title_en}</a></h3>
