@@ -138,12 +138,7 @@ button{cursor:pointer;font-family:inherit}
 [data-theme="dark"] .footer-legal a:hover{color:#aaa}
 [data-theme="dark"] .footer-socials a{color:#444}
 [data-theme="dark"] .footer-socials a:hover{color:#ccc}
-/* dark mode bottom nav */
-[data-theme="dark"] .mob-bottom-nav{background:#0f0f0f;border-top-color:#333}
-[data-theme="dark"] .mob-nav-btn{color:#555}
-[data-theme="dark"] .mob-nav-btn.active{color:#f0f0f0}
-[data-theme="dark"] .mob-nav-btn.active::after{background:#f0f0f0}
-[data-theme="dark"] .mob-fab{background:#e62e2e}
+/* dark mode bottom nav — ลบออกแล้ว (ไม่มี bottom nav) */
 /* dark toggle button */
 .dark-toggle{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:none;border:1.5px solid var(--gray-200);cursor:pointer;font-size:16px;transition:border-color .2s,background .2s;flex-shrink:0}
 .dark-toggle:hover{border-color:var(--black);background:var(--gray-50)}
@@ -253,7 +248,7 @@ button{cursor:pointer;font-family:inherit}
 
 /* ─── FEATURED GRID ─── */
 .feature-card{position:relative}
-.feature-img{width:100%;height:160px;object-fit:cover;background:var(--gray-100);margin-bottom:10px;border-radius:2px}
+.feature-img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;background:var(--gray-100);margin-bottom:10px;border-radius:2px}
 .feature-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--tcc-red);margin-bottom:6px}
 .feature-title{font-size:15px;font-weight:700;line-height:1.4;margin-bottom:8px}
 .feature-title a:hover{text-decoration:underline}
@@ -521,36 +516,7 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 .mobile-nav-link.highlight{color:var(--tcc-red)}
 .mobile-drawer-auth{padding:16px;border-top:1px solid var(--gray-100);margin-top:8px;display:flex;flex-direction:column;gap:8px}
 
-/* ─── MOBILE BOTTOM NAV ─── */
-.mob-bottom-nav{
-  display:none;position:fixed;bottom:0;left:0;right:0;z-index:998;
-  background:#fff;border-top:1px solid var(--gray-200);
-  padding:0 0 env(safe-area-inset-bottom,0);
-  box-shadow:0 -4px 20px rgba(0,0,0,.08);
-}
-.mob-bottom-inner{display:flex;align-items:stretch;height:56px}
-.mob-nav-btn{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:3px;border:none;background:none;
-  cursor:pointer;font-family:inherit;color:var(--gray-400);
-  font-size:9px;font-weight:600;letter-spacing:.04em;
-  text-transform:uppercase;transition:color .15s;padding:0;position:relative;
-}
-.mob-nav-btn svg{width:20px;height:20px;stroke-width:1.8}
-.mob-nav-btn.active{color:var(--black)}
-.mob-nav-btn.active::after{
-  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
-  width:28px;height:2px;background:var(--black);border-radius:0 0 2px 2px;
-}
-/* FAB center button */
-.mob-fab-wrap{flex:1;display:flex;align-items:center;justify-content:center;position:relative}
-.mob-fab{
-  width:44px;height:44px;border-radius:50%;background:var(--tcc-red);
-  color:#fff;border:none;cursor:pointer;font-size:22px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 16px rgba(230,46,46,.35);transition:transform .15s,box-shadow .15s;
-}
-.mob-fab:active{transform:scale(.93);box-shadow:0 2px 8px rgba(230,46,46,.3)}
+/* ─── MOBILE BOTTOM NAV ─── ลบออกแล้ว ไม่ต้องการ bottom tab bar */
 
 /* ─── TABLET (≤900px) ─── */
 @media(max-width:900px){
@@ -567,17 +533,17 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 @media(max-width:600px){
   /* ── GLOBAL ── */
   *{box-sizing:border-box}
-  html,body{overflow-x:hidden;max-width:100vw}
-  /* เพิ่ม padding ล่างสำหรับ bottom nav */
-  body{padding-bottom:calc(56px + env(safe-area-inset-bottom,0))}
+  html,body{overflow-x:hidden;max-width:100vw;width:100%}
+  /* ไม่มี bottom nav padding */
   .container,.page-wrap,.hero,.hero-grid,.hero-main,.hero-thumbs,
   .grid-main,.grid-3,.tcc-news-grid,.sb-hero,.section-block,
-  .filter-tabs,.opinion-grid,.newsletter,.footer-links{
-    max-width:100%;min-width:0;width:100%;
+  .filter-tabs,.opinion-grid,.newsletter,.footer-links,
+  .hero-img-wrap,.tcc-card,.tcc-card-img-wrap,.feature-card,
+  .sb-hero-img,.section-block,.latest-item,.most-read-item{
+    max-width:100%;min-width:0;width:100%;overflow-x:hidden;
   }
 
-  /* ── BOTTOM NAV — แสดงบนมือถือ ── */
-  .mob-bottom-nav{display:block}
+  /* ── BOTTOM NAV — ลบออกแล้ว ── */
 
   /* ── NAVBAR ── */
   .navbar{width:100%;left:0;right:0}
@@ -663,7 +629,7 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
   .sec-title{font-size:12px}
 
   /* ── NEWSLETTER ── */
-  .newsletter{padding:20px 14px;border-radius:0;margin:18px -12px}
+  .newsletter{padding:20px 14px;border-radius:0;margin:18px 0;width:100%;box-sizing:border-box}
   .newsletter h2{font-size:18px}
   .nl-form{flex-direction:column}
   .nl-input{min-width:unset;width:100%}
@@ -704,8 +670,12 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
   .news-detail-close{top:12px;right:12px}
 
   /* ── GENERAL ── */
-  .container{padding:0 12px;overflow:hidden}
-  .page-wrap{padding:12px 0 20px;overflow:hidden}
+  .container{padding:0 12px;overflow:hidden;max-width:100vw;box-sizing:border-box}
+  .page-wrap{padding:12px 0 20px;overflow:hidden;max-width:100%;box-sizing:border-box}
+  /* ป้องกัน img ทุกตัวล้นกรอบ */
+  img{max-width:100%!important;height:auto;display:block}
+  /* ป้องกัน text ยาวล้น */
+  h1,h2,h3,h4,h5,p,a,span,div{word-break:break-word;overflow-wrap:anywhere}
 
   /* ── TCC SECTION ── */
   .tcc-news-section{padding:18px 0}
@@ -729,13 +699,21 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 /* ─── VERY SMALL (≤380px) ─── */
 @media(max-width:380px){
   .logo-text{display:none}
-  .mob-nav-btn span{display:none}
-  .mob-bottom-inner{height:52px}
+  /* mob-bottom-nav ลบออกแล้ว */
 }
 </style>
 </head>
 <body>
 
+<script>
+/* ── Console Safety Guard — รองรับทุก WebView / GAS environment ── */
+(function(){
+  var noop = function(){};
+  var methods = ['log','info','warn','error','debug','group','groupEnd','groupCollapsed','time','timeEnd','table','assert','trace'];
+  if(typeof console === 'undefined'){ window.console = {}; }
+  methods.forEach(function(m){ if(typeof console[m] !== 'function'){ console[m] = noop; } });
+})();
+</script>
 <!-- ════════ CONFIG ════════ -->
 <script>
 // ─────────────────────────────────────────────
@@ -743,7 +721,7 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 //  หาก URL นี้ 404 → ให้ไป Extensions > Apps Script > Deploy > New Deployment
 //  แล้วนำ URL ใหม่มาวางที่นี่
 // ─────────────────────────────────────────────
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwUsQEJ_oJ8PpwzlljBco4s0jCWRG_4RFkrd9m7tWBm9hRmuz917BXVDofwWd1sh3R0rA/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwM01soOw2hV-UBun0IGhgXJR72gb-4Y_baA-BOn5rYt_hhTkOK2CJtUzaGHqI1N1OYdQ/exec';
 // ^ หาก 404: redeploy GAS แล้วใส่ URL ใหม่ด้านบน
 
 const TCC_TOKEN_PRICE = 0.085;
@@ -756,8 +734,8 @@ const IS_LOCAL_FILE = window.location.protocol === 'file:';
   if (!GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
     console.warn('[TCC] GAS_URL ยังไม่ได้ตั้งค่า — ทำงานใน Demo mode');
   } else {
-    console.info('[TCC] GAS_URL:', GAS_URL.substring(0,60) + '...');
-    console.info('[TCC] ถ้าเห็น 404 → redeploy GAS ใหม่และอัปเดต URL ใน <script> config');
+    console.log('[TCC] GAS_URL:', GAS_URL.substring(0,60) + '...');
+    console.log('[TCC] ถ้าเห็น 404 → redeploy GAS ใหม่และอัปเดต URL ใน <script> config');
   }
 })();
 </script>
@@ -978,25 +956,25 @@ const IS_LOCAL_FILE = window.location.protocol === 'file:';
   <!-- SECTION: MARKETS -->
   <div class="section-block" id="section-markets">
     <div class="sec-header"><span class="sec-title">ตลาด</span><a href="#" class="sec-more">ดูทั้งหมด →</a></div>
-    <div id="block-markets"><div class="skel" style="height:160px;border-radius:4px"></div></div>
+    <div id="block-markets"><div class="skel" style="width:100%;aspect-ratio:16/9;border-radius:4px"></div></div>
   </div>
 
   <!-- SECTION: FINANCE -->
   <div class="section-block" id="section-finance">
     <div class="sec-header"><span class="sec-title">การเงิน</span><a href="#" class="sec-more">ดูทั้งหมด →</a></div>
-    <div id="block-finance"><div class="skel" style="height:160px;border-radius:4px"></div></div>
+    <div id="block-finance"><div class="skel" style="width:100%;aspect-ratio:16/9;border-radius:4px"></div></div>
   </div>
 
   <!-- SECTION: POLICY -->
   <div class="section-block" id="section-policy">
     <div class="sec-header"><span class="sec-title">นโยบาย</span><a href="#" class="sec-more">ดูทั้งหมด →</a></div>
-    <div id="block-policy"><div class="skel" style="height:160px;border-radius:4px"></div></div>
+    <div id="block-policy"><div class="skel" style="width:100%;aspect-ratio:16/9;border-radius:4px"></div></div>
   </div>
 
   <!-- SECTION: TECH -->
   <div class="section-block" id="section-tech">
     <div class="sec-header"><span class="sec-title">เทคโนโลยี</span><a href="#" class="sec-more">ดูทั้งหมด →</a></div>
-    <div id="block-tech"><div class="skel" style="height:160px;border-radius:4px"></div></div>
+    <div id="block-tech"><div class="skel" style="width:100%;aspect-ratio:16/9;border-radius:4px"></div></div>
   </div>
 
   <!-- OPINION (static — จัดการใน Sheet "opinion" ภายหลัง) -->
@@ -1101,33 +1079,7 @@ const IS_LOCAL_FILE = window.location.protocol === 'file:';
 </div><!-- /page-wrap -->
 </div><!-- /container -->
 
-<!-- ════════ MOBILE BOTTOM NAV ════════ -->
-<nav class="mob-bottom-nav" id="mob-bottom-nav" aria-label="Mobile Navigation">
-  <div class="mob-bottom-inner">
-    <button class="mob-nav-btn active" id="mobnav-home" onclick="mobNavGo('home')" aria-label="หน้าหลัก">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <span>หน้าหลัก</span>
-    </button>
-    <button class="mob-nav-btn" id="mobnav-prices" onclick="mobNavGo('prices')" aria-label="ราคา">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      <span>ราคา</span>
-    </button>
-    <!-- FAB center -->
-    <div class="mob-fab-wrap">
-      <button class="mob-fab" onclick="mobNavGo('tccnews')" aria-label="TCC News">
-        📣
-      </button>
-    </div>
-    <button class="mob-nav-btn" id="mobnav-news" onclick="mobNavGo('news')" aria-label="ข่าว">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/></svg>
-      <span>ข่าว</span>
-    </button>
-    <button class="mob-nav-btn" id="mobnav-menu" onclick="toggleDrawer()" aria-label="เมนู">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      <span>เมนู</span>
-    </button>
-  </div>
-</nav>
+<!-- MOBILE BOTTOM NAV ถูกลบออกแล้ว — ใช้ Hamburger Drawer แทน -->
 
 <!-- FOOTER -->
 <footer>
@@ -1346,7 +1298,7 @@ function setStatus(state, text) {
 async function fetchGAS(action, params = {}) {
   // ── DEMO / LOCAL MODE ──
   if (!GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE' || IS_LOCAL_FILE) {
-    if (IS_LOCAL_FILE) console.info(`[TCCReport] file:// → Demo (${action})`);
+    if (IS_LOCAL_FILE) console.log(`[TCCReport] file:// → Demo (${action})`);
     await new Promise(r => setTimeout(r, 300));
     return getMockData(action);
   }
@@ -1658,7 +1610,7 @@ function renderFeaturedGrid(news) {
 
   grid.innerHTML = items.map(n => `
     <div class="feature-card">
-      <div style="width:100%;height:160px;border-radius:2px;overflow:hidden;background:var(--gray-100);margin-bottom:10px">
+      <div style="width:100%;aspect-ratio:16/9;border-radius:2px;overflow:hidden;background:var(--gray-100);margin-bottom:10px">
         ${n.image_url
           ? `<img src="${n.image_url}" alt="" style="width:100%;height:100%;object-fit:cover"
                referrerpolicy="no-referrer"
@@ -1764,12 +1716,12 @@ function renderSectionBlock(elId, news) {
 
   el.innerHTML = `
     <div class="sb-hero">
-      <div class="sb-hero-img" style="min-height:160px;border-radius:2px;overflow:hidden;background:var(--gray-100)">
+      <div class="sb-hero-img" style="aspect-ratio:16/9;border-radius:2px;overflow:hidden;background:var(--gray-100)">
         ${hero.image_url
-          ? `<img src="${hero.image_url}" alt="" style="width:100%;height:100%;object-fit:cover;min-height:160px"
+          ? `<img src="${hero.image_url}" alt="" style="width:100%;height:100%;object-fit:cover"
                referrerpolicy="no-referrer"
                onerror="this.parentElement.classList.add('skel');this.remove()">`
-          : `<div class="skel" style="width:100%;height:100%;min-height:160px"></div>`}
+          : `<div class="skel" style="width:100%;height:100%;min-height:90px"></div>`}
       </div>
       <div class="sb-hero-body">
         <div class="sb-hero-cat">${CAT_MAP[hero.category] || hero.category}</div>
@@ -2459,54 +2411,7 @@ function applyDarkMode(isDark, save) {
 // init dark mode ก่อนเนื้อหาโหลด
 initDarkMode();
 
-// ──────────────────────────────────────────────
-//  MOBILE BOTTOM NAV
-// ──────────────────────────────────────────────
-function mobNavGo(section) {
-  // อัปเดต active state
-  document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
-  const btn = document.getElementById('mobnav-' + section);
-  if (btn) btn.classList.add('active');
-
-  if (section === 'home') {
-    window.scrollTo({top:0, behavior:'smooth'});
-  } else if (section === 'prices') {
-    const el = document.querySelector('.prices-widget');
-    if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
-    else document.querySelector('.sidebar-sticky')?.scrollIntoView({behavior:'smooth'});
-  } else if (section === 'tccnews') {
-    const el = document.getElementById('section-tccnews');
-    if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
-  } else if (section === 'news') {
-    const el = document.getElementById('featured-grid');
-    if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
-  }
-}
-
-// ── Auto update bottom nav active on scroll ──
-(function() {
-  const sections = ['mobnav-home','mobnav-news','mobnav-prices'];
-  let ticking = false;
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      requestAnimationFrame(() => {
-        const y = window.scrollY;
-        const pricesEl = document.querySelector('.prices-widget');
-        const newsEl = document.getElementById('featured-grid');
-        const pricesTop = pricesEl ? pricesEl.getBoundingClientRect().top + y - 100 : Infinity;
-        const newsTop   = newsEl   ? newsEl.getBoundingClientRect().top   + y - 100 : Infinity;
-        let active = 'mobnav-home';
-        if (y >= newsTop && y < pricesTop) active = 'mobnav-news';
-        else if (y >= pricesTop) active = 'mobnav-prices';
-        document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
-        const el = document.getElementById(active);
-        if (el) el.classList.add('active');
-        ticking = false;
-      });
-      ticking = true;
-    }
-  }, {passive:true});
-})();
+// ── Mobile bottom nav ถูกลบออกแล้ว — ใช้ Hamburger Drawer แทน ──
 
 // ──────────────────────────────────────────────
 //  MOBILE DRAWER
