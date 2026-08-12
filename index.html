@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"/>
-<title>TCCCoin Report v9: Bitcoin, Ethereum, XRP, ข่าว Crypto และราคา</title>
-<!-- v10: Fix CORS (GAS primary/CoinCap fallback), image centering, mobile text margin -->
+<title>TCCCoin Report v10: Bitcoin, Ethereum, XRP, ข่าว Crypto และราคา</title>
+<!-- v10: Fix prices (GAS→CoinCap→Binance triple fallback, filter price=0), image centering (padding-top trick), mobile text overflow (min-width:0 + overflow-wrap) -->
 <meta name="description" content="แหล่งข่าว Crypto ชั้นนำสำหรับนักเทรดไทย ครอบคลุมตลาด นโยบาย เทคโนโลยี และการเงิน Crypto ระดับโลก"/>
 <meta property="og:title" content="TCC Financial Reports"/>
 <meta property="og:description" content="ข่าว Crypto ภาษาไทย อัปเดตทุก 30 นาที"/>
@@ -226,8 +226,8 @@ button{cursor:pointer;font-family:inherit}
 .hero-main h1{font-size:clamp(22px,2.8vw,34px);font-weight:700;line-height:1.25;margin-bottom:12px;letter-spacing:-.3px;word-break:break-word}
 .hero-main h1 a:hover{text-decoration:underline}
 .hero-meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray-600);margin-bottom:14px;flex-wrap:wrap}
-.hero-img-wrap{width:100%;aspect-ratio:16/9;background:var(--gray-100);margin-bottom:16px;overflow:hidden;border-radius:2px;position:relative}
-.hero-img-wrap img{width:100%;height:100%;object-fit:cover;object-position:center center;display:block}
+.hero-img-wrap{width:100%;position:relative;padding-top:56.25%;height:0;background:var(--gray-100);margin-bottom:16px;overflow:hidden;border-radius:2px}
+.hero-img-wrap img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center center;display:block}
 .hero-excerpt{font-size:15px;line-height:1.65;color:var(--gray-800);margin-bottom:16px;word-break:break-word}
 
 /* ─── THUMBS ─── */
@@ -535,13 +535,15 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
   *{box-sizing:border-box}
   html,body{overflow-x:hidden;max-width:100vw;width:100%}
   /* ไม่มี bottom nav padding */
-  .container,.page-wrap,.hero,.hero-grid,.hero-main,.hero-thumbs,
+  .container,.page-wrap,.hero,.hero-grid,.hero-thumbs,
   .grid-main,.grid-3,.tcc-news-grid,.sb-hero,.section-block,
   .filter-tabs,.opinion-grid,.newsletter,.footer-links,
   .hero-img-wrap,.tcc-card,.tcc-card-img-wrap,.feature-card,
   .sb-hero-img,.section-block,.latest-item,.most-read-item{
     max-width:100%;min-width:0;width:100%;overflow-x:hidden;
   }
+  /* hero-main แยกออก ให้มี padding ด้านข้างโดยไม่ overflow */
+  .hero-main{max-width:100%;min-width:0;overflow-x:hidden;box-sizing:border-box}
 
   /* ── BOTTOM NAV — ลบออกแล้ว ── */
 
@@ -574,21 +576,22 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
   /* ── HERO ── */
   .hero{padding:12px 0 16px}
   .hero-grid{grid-template-columns:1fr;gap:0;background:transparent;overflow:hidden;width:100%}
-  .hero-main{padding:0 4px;padding-bottom:0;min-width:0;overflow:hidden;width:100%;max-width:100%;box-sizing:border-box}
-  .hero-main h1{font-size:clamp(17px,4.5vw,22px);word-break:break-word;overflow-wrap:anywhere;overflow:hidden;hyphens:auto;line-height:1.3;padding:0 2px}
-  .hero-main h1 a{display:block;width:100%}
-  .hero-excerpt{font-size:14px;word-break:break-word;overflow-wrap:anywhere;line-height:1.6;padding:0 2px}
-  .hero-img-wrap{aspect-ratio:16/9;height:auto;width:100%;max-width:100%;overflow:hidden;border-radius:4px}
-  .hero-img-wrap img{width:100%;height:100%;object-fit:cover;object-position:center center}
+  .hero-main{padding:0 8px;padding-bottom:0;min-width:0;overflow:hidden;width:100%;max-width:100%;box-sizing:border-box}
+  .hero-main h1{font-size:clamp(17px,4.5vw,22px);word-break:break-word;overflow-wrap:anywhere;overflow:hidden;hyphens:auto;line-height:1.3;padding:0;margin-bottom:10px}
+  .hero-main h1 a{display:block;width:100%;min-width:0}
+  .hero-excerpt{font-size:14px;word-break:break-word;overflow-wrap:anywhere;line-height:1.6;padding:0;min-width:0}
+  .hero-img-wrap{position:relative;width:100%;max-width:100%;padding-top:56.25%;overflow:hidden;border-radius:4px;height:0}
+  .hero-img-wrap img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center center;display:block}
   .hero-meta{font-size:11px;gap:6px}
 
   /* ── THUMBS ── */
   .hero-thumbs{flex-direction:column;overflow-x:unset;overflow:visible;gap:0;padding-left:0;border-top:1px solid var(--gray-100)}
-  .thumb-item{grid-template-columns:76px 1fr;gap:10px;min-width:0;padding:10px 0}
+  .thumb-item{grid-template-columns:76px 1fr;gap:10px;min-width:0;padding:10px 4px}
   .thumb-img{width:76px;height:52px;flex-shrink:0;border-radius:3px}
-  .thumb-title{font-size:12px;word-break:break-word;overflow-wrap:anywhere;min-width:0;line-height:1.35;padding-right:4px}
+  .thumb-item > div:last-child{min-width:0;overflow:hidden}
+  .thumb-title{font-size:12px;word-break:break-word;overflow-wrap:anywhere;min-width:0;line-height:1.35;padding-right:4px;display:block}
   .thumb-cat{font-size:9px}
-  .thumb-meta{font-size:10px;padding-right:4px}
+  .thumb-meta{font-size:10px;padding-right:4px;flex-wrap:wrap}
 
   /* ── FILTER TABS ── */
   .filter-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;gap:0;padding-bottom:0;margin-bottom:12px;scrollbar-width:none}
@@ -1441,24 +1444,31 @@ async function fetchPrices() {
   // ❌ CoinGecko direct ถูกตัดออก — block CORS จาก browser + rate-limit 429
 
   // ── 1. GAS primary ──
+  // GAS Sheet อาจมีแค่ TCC Token (1-2 coins) ถ้า trigger ยังไม่รันครบ
+  // → ถ้าได้น้อยกว่า 5 coins จริง ให้ fallback CoinCap ต่อเพื่อเติมข้อมูลให้ครบ
+  let gasOk = false;
   try {
     const data = await fetchGAS('prices');
-    if (data.prices && data.prices.length > 0) {
-      allPrices = data.prices;
+    // กรอง price_usd > 0 เท่านั้น (ตัด placeholder ราคา 0)
+    const validPrices = (data.prices || []).filter(p => p.price_usd > 0);
+    if (validPrices.length >= 5) {
+      allPrices = validPrices;
       if (!allPrices.find(p => p.symbol === 'TCC')) {
         allPrices.push({ symbol:'TCC', name:'TCC Token', price_usd: TCC_TOKEN_PRICE, change_24h: 0 });
       }
       console.log('[TCCReport] GAS prices OK —', allPrices.length, 'coins');
       renderPrices();
       renderTicker();
+      gasOk = true;
       return;
     }
-    console.warn('[TCCReport] GAS prices empty → fallback CoinCap');
+    console.warn('[TCCReport] GAS prices too few (' + validPrices.length + ') → fallback CoinCap');
   } catch (gasErr) {
     console.warn('[TCCReport] GAS prices failed:', gasErr.message, '→ fallback CoinCap');
   }
 
-  // ── 2. CoinCap fallback (public API, CORS-friendly) ──
+  // ── 2. CoinCap v2 fallback (public API, CORS-friendly) ──
+  let capOk = false;
   try {
     const COINCAP_IDS = 'bitcoin,ethereum,binance-coin,solana,xrp,cardano,dogecoin,avalanche,polkadot,chainlink,tether,usd-coin';
     const COINCAP_SYM = {
@@ -1474,19 +1484,54 @@ async function fetchPrices() {
     if (res2.ok) {
       const cap = await res2.json();
       const capPrices = (cap.data || []).map(a => ({
-        symbol:     COINCAP_SYM[a.id] || a.symbol,
+        symbol:     COINCAP_SYM[a.id] || a.symbol.toUpperCase(),
         name:       a.name,
         price_usd:  parseFloat(a.priceUsd) || 0,
         change_24h: parseFloat(a.changePercent24Hr) || 0,
         market_cap: parseFloat(a.marketCapUsd) || 0,
         volume_24h: parseFloat(a.volumeUsd24Hr) || 0,
       })).filter(p => p.price_usd > 0);
-      capPrices.push({ symbol:'TCC', name:'TCC Token', price_usd: TCC_TOKEN_PRICE, change_24h: 0 });
-      allPrices = capPrices;
-      console.log('[TCCReport] CoinCap fallback OK —', allPrices.length, 'coins');
+      if (capPrices.length >= 3) {
+        capPrices.push({ symbol:'TCC', name:'TCC Token', price_usd: TCC_TOKEN_PRICE, change_24h: 0 });
+        allPrices = capPrices;
+        capOk = true;
+        console.log('[TCCReport] CoinCap fallback OK —', allPrices.length, 'coins');
+      }
     }
   } catch (capErr) {
     console.warn('[TCCReport] CoinCap fallback failed:', capErr.message);
+  }
+
+  // ── 3. Binance public API (ถ้า CoinCap ก็ fail) ──
+  if (!capOk) {
+    try {
+      const BINANCE_SYMS = ['BTCUSDT','ETHUSDT','BNBUSDT','SOLUSDT','XRPUSDT','ADAUSDT','DOGEUSDT','AVAXUSDT','DOTUSDT','LINKUSDT'];
+      const BINANCE_MAP  = { BTCUSDT:{sym:'BTC',name:'Bitcoin'}, ETHUSDT:{sym:'ETH',name:'Ethereum'}, BNBUSDT:{sym:'BNB',name:'BNB'}, SOLUSDT:{sym:'SOL',name:'Solana'}, XRPUSDT:{sym:'XRP',name:'XRP'}, ADAUSDT:{sym:'ADA',name:'Cardano'}, DOGEUSDT:{sym:'DOGE',name:'Dogecoin'}, AVAXUSDT:{sym:'AVAX',name:'Avalanche'}, DOTUSDT:{sym:'DOT',name:'Polkadot'}, LINKUSDT:{sym:'LINK',name:'Chainlink'} };
+      const bnbUrl = 'https://api.binance.com/api/v3/ticker/24hr?symbols=[' + BINANCE_SYMS.map(s => '"'+s+'"').join(',') + ']';
+      const controller3 = new AbortController();
+      const timer3 = setTimeout(() => controller3.abort(), 10000);
+      const res3 = await fetch(bnbUrl, { signal: controller3.signal, cache: 'no-cache' });
+      clearTimeout(timer3);
+      if (res3.ok) {
+        const bnb = await res3.json();
+        const bnbPrices = bnb.map(t => {
+          const info = BINANCE_MAP[t.symbol] || { sym: t.symbol.replace('USDT',''), name: t.symbol };
+          return {
+            symbol:     info.sym,
+            name:       info.name,
+            price_usd:  parseFloat(t.lastPrice) || 0,
+            change_24h: parseFloat(t.priceChangePercent) || 0,
+          };
+        }).filter(p => p.price_usd > 0);
+        if (bnbPrices.length >= 3) {
+          bnbPrices.push({ symbol:'TCC', name:'TCC Token', price_usd: TCC_TOKEN_PRICE, change_24h: 0 });
+          allPrices = bnbPrices;
+          console.log('[TCCReport] Binance fallback OK —', allPrices.length, 'coins');
+        }
+      }
+    } catch (bnbErr) {
+      console.warn('[TCCReport] Binance fallback failed:', bnbErr.message);
+    }
   }
 
   renderPrices();
@@ -1796,8 +1841,11 @@ function renderMostRead(news) {
 //  PRICES
 // ──────────────────────────────────────────────
 function renderPrices() {
-  if (!allPrices.length) return;
   const el = document.getElementById('price-rows-crypto');
+  if (!allPrices.length) {
+    el.innerHTML = '<div style="padding:20px;text-align:center;color:var(--gray-400);font-size:13px">กำลังโหลดราคา...</div>';
+    return;
+  }
 
   el.innerHTML = allPrices.map(p => {
     const up = p.change_24h >= 0;
