@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"/>
-<title>TCCCoin Report v10: Bitcoin, Ethereum, XRP, ข่าว Crypto และราคา</title>
-<!-- v10: Mobile ground-up redesign — box-sizing global, padding-top 16:9 images, grid→block stacking, triple price fallback (GAS→CoinCap→Binance) -->
+<title>TCCCoin Report v11: Bitcoin, Ethereum, XRP, ข่าว Crypto และราคา</title>
+<!-- v11: Video Embed System — YouTube/Shorts | Facebook/Reels | TikTok (portrait) | Vimeo | Dailymotion | Twitch | Bilibili | PPTV/PPLive | Generic embed
+     GAS v22: TCCNews เพิ่มคอลัมน์ video_url | ส่งกลับใน tccnews + getNewsById actions -->
 <meta name="description" content="แหล่งข่าว Crypto ชั้นนำสำหรับนักเทรดไทย ครอบคลุมตลาด นโยบาย เทคโนโลยี และการเงิน Crypto ระดับโลก"/>
 <meta property="og:title" content="TCC Financial Reports"/>
 <meta property="og:description" content="ข่าว Crypto ภาษาไทย อัปเดตทุก 30 นาที"/>
@@ -94,6 +95,7 @@ button{cursor:pointer;font-family:inherit}
 [data-theme="dark"] .tcc-news-section{border-top-color:#e62e2e}
 [data-theme="dark"] .tcc-card{border-color:#333;background:#1a1a1a}
 [data-theme="dark"] .tcc-card:hover{border-color:#e62e2e}
+[data-theme="dark"] .tcc-card-img-placeholder{background:linear-gradient(135deg,#111 0%,#1e1e1e 100%)}
 [data-theme="dark"] .tcc-list-item{border-bottom-color:#242424}
 [data-theme="dark"] .tcc-empty{border-color:#333;color:#666}
 [data-theme="dark"] .asset-tag{background:#242424;color:#ccc}
@@ -445,6 +447,44 @@ footer{background:#111;color:#ccc;padding:48px 0 24px;margin-top:40px}
 .tcc-list-meta{font-size:11px;color:var(--gray-400);margin-top:3px}
 .tcc-empty{text-align:center;padding:32px 20px;color:var(--gray-400);border:1.5px dashed var(--gray-200);border-radius:4px}
 .tcc-empty p{font-size:13px;margin-top:8px}
+
+/* ─── VIDEO EMBED ─── */
+/* wrapper หลัก */
+.vid-wrap{position:relative;width:100%;background:#000;border-radius:4px;overflow:hidden;flex-shrink:0}
+/* แนวนอน 16:9 — YouTube, Facebook, Vimeo ฯลฯ */
+.vid-wrap[data-orient="landscape"]{aspect-ratio:16/9}
+/* แนวตั้ง 9:16 — TikTok, Reels, Shorts */
+.vid-wrap[data-orient="portrait"]{aspect-ratio:9/16;max-width:320px;margin:0 auto}
+/* square 1:1 */
+.vid-wrap[data-orient="square"]{aspect-ratio:1/1}
+.vid-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;display:block}
+/* platform badge */
+.vid-platform{position:absolute;top:8px;left:8px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:3px;z-index:2;pointer-events:none;line-height:1.4}
+.vid-platform.yt  {background:#ff0000;color:#fff}
+.vid-platform.fb  {background:#1877f2;color:#fff}
+.vid-platform.tt  {background:#010101;color:#fff;border:1px solid #444}
+.vid-platform.ppv {background:var(--tcc-gold);color:#000}
+.vid-platform.vim {background:#1ab7ea;color:#fff}
+.vid-platform.dm  {background:#0066dc;color:#fff}
+.vid-platform.twt {background:#9146ff;color:#fff}
+.vid-platform.bli {background:#00a1d6;color:#fff}
+.vid-platform.oth {background:var(--gray-800);color:#fff}
+/* card ที่มีวิดีโอ — ซ่อน img/placeholder */
+.tcc-card.has-video .tcc-card-img-wrap,
+.tcc-card.has-video .tcc-card-img-placeholder{display:none}
+/* vid ใน detail modal */
+.nd-vid-wrap{margin:0 0 20px;border-radius:4px;overflow:hidden}
+/* portrait card — full width */
+.tcc-card.portrait-video{grid-column:1/-1}
+.tcc-card.portrait-video .vid-wrap{max-width:340px;margin:0 auto}
+/* dark mode */
+[data-theme="dark"] .vid-wrap{background:#111}
+[data-theme="dark"] .vid-platform.tt{border-color:#555}
+/* responsive portrait clamp */
+@media(max-width:600px){
+  .vid-wrap[data-orient="portrait"]{max-width:240px}
+  .tcc-card.portrait-video .vid-wrap{max-width:240px}
+}
 
 /* ─── SHARE BUTTON ─── */
 .btn-share{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--gray-600);background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:20px;cursor:pointer;transition:all .15s;font-family:inherit;white-space:nowrap;flex-shrink:0}
@@ -1583,7 +1623,46 @@ function getMockData(action) {
     { symbol:'DOT',  name:'Polkadot',  price_usd: 0, change_24h: 0 },
     { symbol:'LINK', name:'Chainlink', price_usd: 0, change_24h: 0 },
   ]};
-  if (action === 'tccnews')     return { tccnews: [] };
+  if (action === 'tccnews') return { tccnews: [
+    // card 1 — วิดีโอ YouTube (landscape)
+    { id:'tcc001', timestamp: new Date(Date.now()-1*3600000).toISOString(),
+      title_th:'TCC Crypto Summit Thailand 2026 — ไฮไลต์งาน',
+      title_en:'TCC Crypto Summit Thailand 2026 — Highlights',
+      url:'#', source:'TCC', category:'markets', sentiment:'positive',
+      asset_tags:['BTC','ETH'], image_url:'',
+      video_url:'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      source_type:'tcc' },
+    // card 2 — วิดีโอ TikTok (portrait — ขยาย full-width)
+    { id:'tcc002', timestamp: new Date(Date.now()-4*3600000).toISOString(),
+      title_th:'TCC Token Q3/2026 — อัปเดตราคาและโรดแมป',
+      title_en:'TCC Token Q3/2026 — Price & Roadmap Update',
+      url:'#', source:'TCC', category:'markets', sentiment:'positive',
+      asset_tags:[], image_url:'',
+      video_url:'https://www.tiktok.com/@tcc_crypto/video/7400000000000000001',
+      source_type:'tcc' },
+    // list 03 — วิดีโอ Facebook (landscape)
+    { id:'tcc003', timestamp: new Date(Date.now()-8*3600000).toISOString(),
+      title_th:'ประกาศ: TCC Marketplace v24 ออกแล้ว',
+      title_en:'Announcement: TCC Marketplace v24 Released',
+      url:'#', source:'TCC', category:'tech', sentiment:'positive',
+      asset_tags:[], image_url:'',
+      video_url:'https://www.facebook.com/watch?v=123456789012345',
+      source_type:'tcc' },
+    // list 04 — รูปภาพปกติ
+    { id:'tcc004', timestamp: new Date(Date.now()-12*3600000).toISOString(),
+      title_th:'แนะนำสมาชิกใหม่ — TCC Earn Contract รอบที่ 7',
+      title_en:'New Member Guide — TCC Earn Contract Round 7',
+      url:'#', source:'TCC', category:'finance', sentiment:'neutral',
+      asset_tags:[], image_url:'https://i.ibb.co/ycVLd1vP/XQBp-X.jpg',
+      video_url:'', source_type:'tcc' },
+    // list 05 — ไม่มีรูปไม่มีวิดีโอ
+    { id:'tcc005', timestamp: new Date(Date.now()-24*3600000).toISOString(),
+      title_th:'นโยบายการถอนเงิน BSC อัปเดตใหม่',
+      title_en:'BSC Withdrawal Policy Update',
+      url:'#', source:'TCC', category:'policy', sentiment:'neutral',
+      asset_tags:['BNB'], image_url:'',
+      video_url:'', source_type:'tcc' },
+  ]};
   if (action === 'events')      return { events: [] };
   if (action === 'getNewsById') return { news: null };
   return { news: [] };
@@ -1880,6 +1959,130 @@ function renderFeaturedGrid(news) {
   `).join('');
 }
 
+// ══════════════════════════════════════════════
+//  VIDEO URL PARSER & EMBED ENGINE  (v11)
+//  รองรับ: YouTube | YouTube Shorts | Facebook Video | Facebook Reels
+//           TikTok (portrait) | Vimeo | Dailymotion | Twitch
+//           Bilibili | PPTV / PPLive | Generic embed URL
+// ══════════════════════════════════════════════
+
+/**
+ * parseVideoUrl(url)
+ * Returns: { embed, platform, orient, label } หรือ null
+ *   embed    — iframe src ที่ใช้ได้ทันที
+ *   platform — 'yt'|'fb'|'tt'|'ppv'|'vim'|'dm'|'twt'|'bli'|'oth'
+ *   orient   — 'landscape' | 'portrait' | 'square'
+ *   label    — ชื่อแพลตฟอร์มสำหรับ badge
+ */
+function parseVideoUrl(url) {
+  if (!url || typeof url !== 'string') return null;
+  const u = url.trim();
+  if (!u) return null;
+  let m;
+
+  // ── YouTube (watch / shorts / live / embed / youtu.be) ──
+  m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|live\/|embed\/|v\/))([A-Za-z0-9_-]{11})/);
+  if (m) {
+    const isShorts = /\/shorts\//i.test(u);
+    return {
+      embed:    `https://www.youtube.com/embed/${m[1]}?rel=0&modestbranding=1`,
+      platform: 'yt',
+      orient:   isShorts ? 'portrait' : 'landscape',
+      label:    isShorts ? 'YouTube Shorts' : 'YouTube',
+    };
+  }
+
+  // ── Facebook Video / Reels ──
+  if (/facebook\.com|fb\.watch/i.test(u)) {
+    const cleanUrl = u.split('?')[0];
+    const encoded  = encodeURIComponent(cleanUrl);
+    const isReel   = /\/reel\//i.test(u);
+    return {
+      embed:    `https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false&width=720&autoplay=false&mute=0`,
+      platform: 'fb',
+      orient:   isReel ? 'portrait' : 'landscape',
+      label:    isReel ? 'Facebook Reels' : 'Facebook',
+    };
+  }
+
+  // ── TikTok — /video/ID หรือ vm.tiktok.com/CODE ──
+  m = u.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/);
+  if (m) {
+    return { embed: `https://www.tiktok.com/embed/v2/${m[1]}`, platform: 'tt', orient: 'portrait', label: 'TikTok' };
+  }
+  m = u.match(/vm\.tiktok\.com\/([A-Za-z0-9]+)/);
+  if (m) {
+    // vm.tiktok.com links ต้อง resolve redirect → ใช้ embed กับ code
+    return { embed: `https://www.tiktok.com/embed/v2/${m[1]}`, platform: 'tt', orient: 'portrait', label: 'TikTok' };
+  }
+  // ── TikTok embed URL โดยตรง ──
+  if (/tiktok\.com\/embed/i.test(u)) {
+    return { embed: u, platform: 'tt', orient: 'portrait', label: 'TikTok' };
+  }
+
+  // ── Vimeo ──
+  m = u.match(/vimeo\.com\/(\d+)/);
+  if (m) {
+    return { embed: `https://player.vimeo.com/video/${m[1]}?title=0&byline=0&portrait=0`, platform: 'vim', orient: 'landscape', label: 'Vimeo' };
+  }
+
+  // ── Dailymotion ──
+  m = u.match(/dailymotion\.com\/video\/([a-z0-9]+)/i);
+  if (m) {
+    return { embed: `https://www.dailymotion.com/embed/video/${m[1]}`, platform: 'dm', orient: 'landscape', label: 'Dailymotion' };
+  }
+
+  // ── Twitch VOD ──
+  m = u.match(/twitch\.tv\/videos\/(\d+)/);
+  if (m) {
+    const parent = encodeURIComponent(window.location.hostname || 'localhost');
+    return { embed: `https://player.twitch.tv/?video=${m[1]}&parent=${parent}&autoplay=false`, platform: 'twt', orient: 'landscape', label: 'Twitch' };
+  }
+  // ── Twitch Live Channel ──
+  m = u.match(/twitch\.tv\/([A-Za-z0-9_]+)(?:\/|$)/);
+  if (m && !u.includes('/videos/')) {
+    const parent = encodeURIComponent(window.location.hostname || 'localhost');
+    return { embed: `https://player.twitch.tv/?channel=${m[1]}&parent=${parent}&autoplay=false`, platform: 'twt', orient: 'landscape', label: 'Twitch Live' };
+  }
+
+  // ── Bilibili ──
+  m = u.match(/bilibili\.com\/video\/(BV[A-Za-z0-9]+|av\d+)/i);
+  if (m) {
+    return { embed: `https://player.bilibili.com/player.html?bvid=${m[1]}&autoplay=0&as_wide=1`, platform: 'bli', orient: 'landscape', label: 'Bilibili' };
+  }
+
+  // ── PPTV / PPLive Thailand ──
+  if (/pptv\.com|pplive\.com/i.test(u)) {
+    const embedUrl = u.replace(/\/(watch|video|program)\//, '/embed/');
+    return { embed: embedUrl, platform: 'ppv', orient: 'landscape', label: 'PPTV' };
+  }
+
+  // ── Generic embed URL (/embed/ หรือ /player/ ใน URL) ──
+  if (/\/embed\/|\/player\//i.test(u) && /^https?:\/\//i.test(u)) {
+    return { embed: u, platform: 'oth', orient: 'landscape', label: 'วิดีโอ' };
+  }
+
+  return null; // ไม่ใช่ video URL ที่รองรับ
+}
+
+/**
+ * buildVideoHtml(v, extraClass)
+ * สร้าง HTML wrapper สำหรับ embed iframe
+ */
+function buildVideoHtml(v, extraClass = '') {
+  const badgeCls = v.platform || 'oth';
+  return `<div class="vid-wrap ${extraClass}" data-orient="${v.orient}">
+    <iframe
+      src="${v.embed}"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+      loading="lazy"
+      title="${v.label}"
+      referrerpolicy="no-referrer"></iframe>
+    <span class="vid-platform ${badgeCls}">${v.label}</span>
+  </div>`;
+}
+
 // ──────────────────────────────────────────────
 //  TCC NEWS RENDER
 // ──────────────────────────────────────────────
@@ -1903,21 +2106,38 @@ function renderTCCNews() {
 
   // Card grid (top 2)
   gridEl.innerHTML = cards.map(n => {
-    const imgHtml = n.image_url
-      ? `<div class="tcc-card-img-wrap">
+    // 1. ลอง parse video_url ก่อน
+    const vidMeta   = parseVideoUrl(n.video_url);
+    const isPortrait = vidMeta && vidMeta.orient === 'portrait';
+
+    // 2. สร้าง media block
+    let mediaHtml;
+    if (vidMeta) {
+      // วิดีโอ — embed iframe (ไม่ต้องกด openNewsDetail เพื่อเปิด)
+      mediaHtml = buildVideoHtml(vidMeta);
+    } else if (n.image_url) {
+      mediaHtml = `<div class="tcc-card-img-wrap" style="cursor:pointer" onclick="openNewsDetail('${n.id}')">
            <img class="tcc-card-img" src="${n.image_url}" alt="${n.title_th || ''}" referrerpolicy="no-referrer"
              onerror="this.closest('.tcc-card-img-wrap').outerHTML='<div class=\\'tcc-card-img-placeholder\\'><svg width=\\'48\\' height=\\'48\\' viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'white\\' stroke-width=\\'1\\'><path d=\\'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9\\'/></svg></div>'">
-         </div>`
-      : `<div class="tcc-card-img-placeholder">
+         </div>`;
+    } else {
+      mediaHtml = `<div class="tcc-card-img-placeholder" style="cursor:pointer" onclick="openNewsDetail('${n.id}')">
            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1">
              <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9"/>
            </svg>
          </div>`;
+    }
+
+    // 3. class ของ card
+    const cardCls = [
+      'tcc-card',
+      vidMeta ? 'has-video' : '',
+      isPortrait ? 'portrait-video' : '',
+    ].filter(Boolean).join(' ');
+
     return `
-      <div class="tcc-card">
-        <div style="cursor:pointer" onclick="openNewsDetail('${n.id}')">
-          ${imgHtml}
-        </div>
+      <div class="${cardCls}">
+        ${mediaHtml}
         <div class="tcc-card-body">
           <div class="tcc-card-cat">${CAT_MAP[n.category] || n.category || 'ประกาศ'}</div>
           <div class="tcc-card-title">
@@ -1936,18 +2156,25 @@ function renderTCCNews() {
   // List (items 3-7)
   if (rest.length) {
     listEl.style.display = '';
-    listEl.innerHTML = rest.map((n, i) => `
+    listEl.innerHTML = rest.map((n, i) => {
+      const vidMeta = parseVideoUrl(n.video_url);
+      const vidBadge = vidMeta
+        ? `<span class="vid-platform ${vidMeta.platform}" style="position:static;font-size:9px;padding:2px 6px;border-radius:3px">${vidMeta.label}</span>`
+        : '';
+      return `
       <div class="tcc-list-item">
         <div class="tcc-list-num">${String(i + 3).padStart(2, '0')}</div>
         <div class="tcc-list-body">
           <h4><a href="#" onclick="event.preventDefault();openNewsDetail('${n.id}')">${n.title_th || n.title_en}</a></h4>
           <div class="tcc-list-meta" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            ${vidBadge}
             <span>${timeAgo(n.timestamp)}</span>
             ${(n.asset_tags || []).length ? '· ' + n.asset_tags.map(t => `<span class="asset-tag">${t}</span>`).join('') : ''}
             ${shareBtnHtml(n.id, n.title_th || n.title_en, n.url)}
           </div>
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   } else {
     listEl.style.display = 'none';
   }
@@ -2392,8 +2619,23 @@ function openNewsDetail(newsId) {
 function _renderNewsDetail(n) {
   _detailNewsId = n.id;
 
-  const imgEl = document.getElementById('nd-img');
-  if (n.image_url) {
+  // ── Media: วิดีโอ > รูปภาพ > ว่าง ──
+  const imgEl   = document.getElementById('nd-img');
+  const vidMeta = parseVideoUrl(n.video_url);
+
+  // ลบ video wrapper เก่าถ้ามี
+  const oldVid = document.getElementById('nd-vid-container');
+  if (oldVid) oldVid.remove();
+
+  if (vidMeta) {
+    // มีวิดีโอ — ซ่อนรูปและ inject video
+    imgEl.style.display = 'none';
+    const vidContainer = document.createElement('div');
+    vidContainer.id = 'nd-vid-container';
+    vidContainer.className = 'nd-vid-wrap';
+    vidContainer.innerHTML = buildVideoHtml(vidMeta);
+    imgEl.parentNode.insertBefore(vidContainer, imgEl);
+  } else if (n.image_url) {
     imgEl.src = n.image_url; imgEl.style.display = 'block';
     imgEl.referrerPolicy = 'no-referrer';
     imgEl.onerror = () => { imgEl.style.display = 'none'; };
