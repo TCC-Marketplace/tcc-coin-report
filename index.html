@@ -12,7 +12,10 @@
      แก้ mock data ที่มี TikTok/Facebook video ID ปลอม → ใช้รูป placeholder + ลิงก์แทน
      v13 (fix): TikTok เปลี่ยนจาก iframe /embed/v2/ID ตรงๆ → official oEmbed
      (blockquote + tiktok.com/embed.js) แก้ปัญหาเล่นไม่ได้บนมือถือ (iOS Safari บล็อก
-     third-party storage) พร้อม fallback link "ดูใน TikTok" ในตัวถ้า script โหลดไม่สำเร็จ -->
+     third-party storage) พร้อม fallback link "ดูใน TikTok" ในตัวถ้า script โหลดไม่สำเร็จ
+     v14 (fix): ตัด CoinCap v2 fallback ออก — api.coincap.io ปิดตัวถาวร (DNS ไม่
+     resolve) ย้ายไป rest.coincap.io v3 ที่ต้องใช้ API key แล้ว เหลือ fallback chain
+     แค่ GAS → Binance (ตัด timeout 12 วิ ที่เสียเปล่าออกไปด้วย) -->
 <meta name="description" content="แหล่งข่าว Crypto ชั้นนำสำหรับนักเทรดทั่วโลก ครอบคลุมตลาด นโยบาย เทคโนโลยี และการเงิน Crypto ระดับโลก"/>
 <meta property="og:title" content="TCC Financial Reports"/>
 <meta property="og:description" content="ข่าว Crypto อัปเดตทุก 30 นาที"/>
@@ -1746,12 +1749,16 @@ const COINGECKO_NAME = {
 async function fetchPrices() {
   // ── Strategy ──
   // 1. GAS Sheet (primary) — server-side ไม่โดน CORS, มีข้อมูลครบ
-  // 2. CoinCap API (fallback) — public CORS-friendly, ไม่ต้อง key
+  // 2. Binance public API (fallback) — public, CORS-friendly, ไม่ต้อง key
   // ❌ CoinGecko direct ถูกตัดออก — block CORS จาก browser + rate-limit 429
+  // ❌ CoinCap v2 ถูกตัดออก (2026-08) — api.coincap.io ปิดตัวถาวรแล้ว (DNS ไม่ resolve
+  //    เลย ไม่ใช่แค่ down ชั่วคราว) ผู้ให้บริการย้ายไป rest.coincap.io v3 ที่ต้องใช้
+  //    API key/บัญชี (ไม่ฟรีแบบเดิม) เก็บไว้จะมีแต่ทำให้เสียเวลา timeout 12 วิ +
+  //    ยิง request ที่ fail แน่นอนทุกครั้งโดยเปล่าประโยชน์ ก่อนไปถึง Binance ที่ใช้ได้จริง
 
   // ── 1. GAS primary ──
   // GAS Sheet อาจมีแค่ TCC Token (1-2 coins) ถ้า trigger ยังไม่รันครบ
-  // → ถ้าได้น้อยกว่า 5 coins จริง ให้ fallback CoinCap ต่อ
+  // → ถ้าได้น้อยกว่า 5 coins จริง ให้ fallback Binance ต่อ
   try {
     const data = await fetchGAS('prices');
     const validPrices = (data.prices || []).filter(p => p.price_usd > 0);
@@ -1765,48 +1772,13 @@ async function fetchPrices() {
       renderTicker();
       return;
     }
-    console.warn('[TCCReport] GAS prices too few (' + ((data.prices||[]).length) + ') → fallback CoinCap');
+    console.warn('[TCCReport] GAS prices too few (' + ((data.prices||[]).length) + ') → fallback Binance');
   } catch (gasErr) {
-    console.warn('[TCCReport] GAS prices failed:', gasErr.message, '→ fallback CoinCap');
+    console.warn('[TCCReport] GAS prices failed:', gasErr.message, '→ fallback Binance');
   }
 
-  // ── 2. CoinCap v2 fallback ──
-  let capOk = false;
-  try {
-    const COINCAP_IDS = 'bitcoin,ethereum,binance-coin,solana,xrp,cardano,dogecoin,avalanche,polkadot,chainlink,tether,usd-coin';
-    const COINCAP_SYM = {
-      bitcoin:'BTC','binance-coin':'BNB',solana:'SOL',xrp:'XRP',
-      cardano:'ADA',dogecoin:'DOGE',avalanche:'AVAX',polkadot:'DOT',
-      chainlink:'LINK',tether:'USDT','usd-coin':'USDC',ethereum:'ETH',
-    };
-    const capUrl = `https://api.coincap.io/v2/assets?ids=${COINCAP_IDS}&limit=20`;
-    const controller2 = new AbortController();
-    const timer2 = setTimeout(() => controller2.abort(), 12000);
-    const res2 = await fetch(capUrl, { signal: controller2.signal, cache: 'no-cache' });
-    clearTimeout(timer2);
-    if (res2.ok) {
-      const cap = await res2.json();
-      const capPrices = (cap.data || []).map(a => ({
-        symbol:     COINCAP_SYM[a.id] || a.symbol.toUpperCase(),
-        name:       a.name,
-        price_usd:  parseFloat(a.priceUsd) || 0,
-        change_24h: parseFloat(a.changePercent24Hr) || 0,
-        market_cap: parseFloat(a.marketCapUsd) || 0,
-        volume_24h: parseFloat(a.volumeUsd24Hr) || 0,
-      })).filter(p => p.price_usd > 0);
-      if (capPrices.length >= 3) {
-        capPrices.push({ symbol:'TCC', name:'TCC Token', price_usd: TCC_TOKEN_PRICE, change_24h: 0 });
-        allPrices = capPrices;
-        capOk = true;
-        console.log('[TCCReport] CoinCap fallback OK —', allPrices.length, 'coins');
-      }
-    }
-  } catch (capErr) {
-    console.warn('[TCCReport] CoinCap fallback failed:', capErr.message);
-  }
-
-  // ── 3. Binance public API (ถ้า CoinCap ก็ fail) ──
-  if (!capOk) {
+  // ── 2. Binance public API ──
+  {
     try {
       const BINANCE_SYMS = ['BTCUSDT','ETHUSDT','BNBUSDT','SOLUSDT','XRPUSDT','ADAUSDT','DOGEUSDT','AVAXUSDT','DOTUSDT','LINKUSDT'];
       const BINANCE_MAP  = {
